@@ -1,4 +1,4 @@
 module.exports = {
   name: 'core_documents',
-  dependencies: [],
+  dependencies: ['core_persistence'],
 };

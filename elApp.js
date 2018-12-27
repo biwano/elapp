@@ -6,7 +6,17 @@ const elAppMaker = function elAppMaker(app) {
   elApp.methods = {};
   elApp.config = config;
 
-
+  elApp.getConfig = function getConfig(path, def) {
+    const elems = path.split('.');
+    let localconfig = elApp.config;
+    let i = 0;
+    while (i < elems.length) {
+      localconfig = localconfig[elems[i]];
+      i += 1;
+      if (typeof localconfig === 'undefined') return def;
+    }
+    return localconfig;
+  };
   elApp.registerRouter = function registerRouter(elAppRouter) {
     elApp.express.use(elAppRouter.path, elAppRouter.router);
   };

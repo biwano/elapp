@@ -9,7 +9,7 @@ const listDirectories = function listDirectories(dir) {
 const listFiles = function listFiles(dir) {
   return readdirSync(dir).map(name => join(dir, name)).filter(isFile);
 };
-const load = function load(elApp) {
+const load = async function load(elApp) {
   const modulesDir = join(__dirname, 'modules');
 
   // Requiring modules
@@ -24,44 +24,59 @@ const load = function load(elApp) {
     });
     modules[module_.name] = module_;
   });
-  const loadModule = function loadModule(moduleName) {
-    const module_ = modules[moduleName];
-    if (typeof module_ === 'undefined') {
-      console.log(`[Module Loader] module not found: ${moduleName}`);
-    } else if (module_.status === 'loading') {
-      console.log(`[Module Loader] module cycle detected: ${moduleName}`);
-    } else if (module_.status === 'viewed') {
+  const loadModule = async function loadModule(moduleName) {
+    return new Promise((async (resolve, reject) => {
+      const module_ = modules[moduleName];
+      let error;
+      if (typeof module_ === 'undefined') {
+        error = `[Module Loader] Error: module not found: ${moduleName}`;
+      } else if (module_.status === 'loading') {
+        error = `[Module Loader] Error: module cycle detected: ${moduleName}`;
+      } else if (module_.status === 'viewed') {
       // Setting loading status
-      module_.status = 'loading';
-      // Loading dependencies
-      if (typeof module_.dependencies !== 'undefined') {
-        module_.dependencies.forEach((dependencyName) => {
-          loadModule(dependencyName);
-        });
-      }
-      // Loading module
-      console.log(`[Module Loader] loading: ${moduleName}`);
-      const loadFiles = function loadFiles(path, callback) {
-        const filesPath = join(module_.path, path);
-        if (existsSync(filesPath)) {
-          listFiles(filesPath).forEach(filePath => callback(require(filePath)),
-          );
+        module_.status = 'loading';
+        // Loading dependencies
+        let dependencies = module_.dependencies;
+        if (typeof dependencies === 'function') {
+          dependencies = dependencies(elApp);
         }
-      };
-
-      // Loading routers
-      loadFiles('routers', elAppRouter => elApp.registerRouter(elAppRouter));
-      // Loading methods
-      loadFiles('methods', elAppMethod => elApp.registerMethod(elAppMethod));
-      module_.status = 'loaded';
-      console.log(`[Module Loader] loaded: ${moduleName}`);
-    } else if (module_.status === 'loaded') {
-    } else {
-      console.log(`[Module Loader] module status error: ${moduleName}`);
-    }
+        if (typeof dependencies === 'string') {
+          dependencies = [dependencies];
+        }
+        if (typeof dependencies === 'object') {
+          dependencies.forEach((dependencyName) => {
+            loadModule(dependencyName);
+          });
+        }
+        // Loading module
+        console.log(`[Module Loader] loading: ${moduleName}`);
+        const loadFiles = function loadFiles(path, callback) {
+          const filesPath = join(module_.path, path);
+          if (existsSync(filesPath)) {
+            listFiles(filesPath).forEach(filePath => callback(require(filePath)),
+            );
+          }
+        };
+        // Initializing module
+        const initPath = join(module_.path, 'init.js');
+        if (existsSync(initPath)) {
+          await require(initPath)(elApp);
+        }
+        // Loading routers
+        loadFiles('routers', elAppRouter => elApp.registerRouter(elAppRouter));
+        // Loading methods
+        loadFiles('methods', elAppMethod => elApp.registerMethod(elAppMethod));
+        module_.status = 'loaded';
+        resolve();
+      } else if (module_.status === 'loaded') {
+        resolve();
+      } else {
+        error = `[Module Loader] Error: module status error: ${moduleName}`;
+      }
+      if (typeof error !== 'undefined') reject('error');
+    }));
   };
-  // Loading modules
-  Object.keys(modules).forEach(loadModule);
+  Object.keys(modules).forEach(async (module) => { await loadModule(module); });
 };
 
 module.exports = load;
