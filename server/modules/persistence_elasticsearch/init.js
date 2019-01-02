@@ -12,7 +12,7 @@ module.exports = function init(elApp) {
   persistence.connect = function connect() {
     this.es = new elasticsearch.Client({
       host: this.host,
-      log: this.log,
+      log: elApp.logService.getLogLevelName('persistence_backend'),
     });
     return this.es;
   };

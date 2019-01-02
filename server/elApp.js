@@ -17,11 +17,14 @@ const elAppMaker = function elAppMaker(app) {
     }
     return localconfig;
   };
-  elApp.registerRouter = function registerRouter(elAppRouter) {
+  elApp.registerRouter = async function registerRouter(elAppRouter) {
+    if (typeof elAppRouter === 'function') {
+      elAppRouter = await elAppRouter(elApp);
+    }
     elApp.express.use(elAppRouter.path, elAppRouter.router);
   };
-  elApp.registerService = function registerService(elAppService) {
-    elApp[`${elAppService.name}`] = elAppService.service(elApp);
+  elApp.registerService = async function registerService(elAppService) {
+    elApp[`${elAppService.name}`] = await elAppService.service(elApp);
   };
   elApp.getMethod = function getMethod(category, name) {
     return elApp.methods[category][name];

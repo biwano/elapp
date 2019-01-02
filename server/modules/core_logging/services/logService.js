@@ -1,0 +1,44 @@
+
+const service = function service(elApp) {
+  const logLevels = { error: 0, warning: 1, info: 2, debug: 3, trace: 4 };
+  const serviceInstance = {
+    write(data) {
+      console.log(data);
+    },
+    getLogLevel(category) {
+      return logLevels[this.getLogLevelName(category)];
+    },
+    getLogLevelName(category) {
+      return elApp.getConfig(`log.${category}.level`,
+        elApp.getConfig('log.level',
+          'info'));
+    },
+    // Main logging function
+    log(level, category, data) {
+      // Checking log level
+      if (typeof data === 'undefined' || typeof category === 'undefined' || typeof level === 'undefined') {
+        elApp.logService.error('logging', 'Bad call to logging function');
+      }
+      if (level <= this.getLogLevel(category)) {
+        const date = new Date();
+        const logDestinations = elApp.getConfig(`log.${category}.destinations`,
+          elApp.getConfig('log.destinations',
+            ['logService']));
+        logDestinations.forEach((destination) => {
+          elApp[destination].write(`[ ${category} ] ${date.toLocaleString()}: ${data}`);
+        });
+      }
+    },
+  };
+  Object.keys(logLevels).forEach((level) => {
+    serviceInstance[level] = function logForLevel(category, data) {
+      serviceInstance.log(logLevels[level], category, data);
+    };
+  });
+  return serviceInstance;
+};
+
+module.exports = {
+  name: 'logService',
+  service,
+};

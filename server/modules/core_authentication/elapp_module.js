@@ -1,4 +1,4 @@
 module.exports = {
   name: 'core_authentication',
-  dependencies: [],
+  dependencies: ['core_logging'],
 };

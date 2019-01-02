@@ -1,4 +1,4 @@
 module.exports = {
-  name: 'authentication_anonymous',
+  name: 'authentication_cookie',
   dependencies: ['core_authentication', 'core_logging'],
 };

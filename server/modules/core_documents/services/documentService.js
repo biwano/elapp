@@ -5,10 +5,10 @@ const service = function service(elApp) {
   return {
     // Creates a document if the key is not used
     cache: new NodeCache(),
-    async createDocument(schemaIdentifier, body_) {
+    async create(schemaIdentifier, body_) {
       const body = Object.assign({}, body_);
 
-      if (!await this.keyUsed(schemaIdentifier, body)) {
+      if (!await elApp.schemaService.keyUsed(schemaIdentifier, body)) {
         // Adds the schema to the body
         body.$schema = schemaIdentifier;
         // Creates an uuid if none is given
@@ -16,33 +16,17 @@ const service = function service(elApp) {
         // Checks the document consistency
         this.checkDocument(body);
         // Saves the document
+        elApp.logService.trace('documents', `Creating document with schema: ${schemaIdentifier}`);
         return elApp.persistence.putDocument(schemaIdentifier, body);
       }
       return null;
     },
-    async checkDocument(body) {
-      const schema = await this.getSchema(body.$schema);
+    async check(body) {
+      const schema = await elApp.schemaService.get(body.$schema);
       if (schema === null || typeof schema === 'undefined') throw new Error('Ek!');
     },
-    getSchema(schemaIdentifier) {
-      return new Promise(async (resolve, reject) => {
-        let schema = this.cache.get(`schema_${schemaIdentifier}`);
-        if (typeof schema === 'undefined') {
-          schema = await elApp.persistence.getDocument({ $schema: 'schema', identifier: schemaIdentifier });
-          console.log(schemaIdentifier);
-          if (schema !== null) {
-            this.cache.set(`schema_${schemaIdentifier}`, schema);
-          } else reject(`[ DocumentService ] Schema not found: ${schemaIdentifier}`);
-        }
-        resolve(schema);
-      });
-    },
-    async keyUsed(schemaIdentifier, key) {
-      const doc = await this.getDocumentByKey(schemaIdentifier, key);
-      return doc !== null;
-    },
-    async getDocumentByKey(schemaIdentifier, key) {
-      const schema = await this.getSchema(schemaIdentifier);
+    async getByKey(schemaIdentifier, key) {
+      const schema = await elApp.schemaService.get(schemaIdentifier);
       let doc = null;
       if (typeof schema.key !== 'undefined') {
         const matchParams = { $schema: schemaIdentifier };
@@ -50,25 +34,6 @@ const service = function service(elApp) {
         doc = await elApp.persistence.getDocument(matchParams);
       }
       return doc;
-    },
-    async registerSchema(params) {
-      const identifier = params.identifier;
-      const fields = params.fields;
-      let key = params.key;
-      console.log(`[ DocumentService ] Registering schema: ${params.identifier}`);
-      if (typeof key === 'undefined') key = [];
-      if (typeof key === 'string') key = [key];
-      // Create the collection if it dos not exist
-      await elApp.persistence.registerSchema(params);
-      const schema = {
-        identifier,
-        key,
-        fields,
-      };
-      this.cache.set(`schema_${identifier}`, schema);
-
-      // Saves the definition of the schema in the schema collection if it does not exist
-      return this.createDocument('schema', schema);
     },
   };
 };

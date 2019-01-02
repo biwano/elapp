@@ -10,14 +10,32 @@ const listDirectories = function listDirectories(dir) {
 const listFiles = function listFiles(dir) {
   return readdirSync(dir).map(name => join(dir, name)).filter(isFile);
 };
+const trace = function trace(elApp, data) {
+  if (typeof elApp.logService !== 'undefined') {
+    elApp.logService.trace('moduleloader', data);
+  }
+};
+const debug = function debug(elApp, data) {
+  if (typeof elApp.logService !== 'undefined') {
+    elApp.logService.debug('moduleloader', data);
+  }
+};
+const error = function error(elApp, data) {
+  if (typeof elApp.logService !== 'undefined') {
+    elApp.logService.debug('moduleloader', data);
+  } else {
+    console.log(data);
+  }
+};
+
 const loadModule = async function loadModule(elApp, modules, moduleName) {
   return new Promise((async (resolve, reject) => {
     const module_ = modules[moduleName];
     let error;
     if (typeof module_ === 'undefined') {
-      error = `[Module Loader] Error: module not found: ${moduleName}`;
+      error = `Error: module not found: ${moduleName}`;
     } else if (module_.status === 'loading') {
-      error = `[Module Loader] Error: module cycle detected: ${moduleName}`;
+      error = `Error: module cycle detected: ${moduleName}`;
     } else if (module_.status === 'viewed') {
       // Setting loading status
       module_.status = 'loading';
@@ -32,32 +50,35 @@ const loadModule = async function loadModule(elApp, modules, moduleName) {
       if (typeof dependencies === 'object') {
         /* eslint-disable */
         for (const dependencyName of dependencies) {
-          //console.log(`DEP start: ${dependencyName}`);
+          trace(elApp, `Loading dependency starts: ${dependencyName}`);
           await loadModule(elApp, modules, dependencyName);
-          //console.log(`DEP end: ${dependencyName}`);
+          trace(elApp, `Loading dependency ends: ${dependencyName}`);
         }
       }
       // Loading module
-      console.log(`[ Module Loader ] loading: ${moduleName}`);
-      const loadFiles = function loadFiles(path, callback) {
+      debug(elApp, `loading: ${moduleName}`);
+      const loadFiles = async function loadFiles(path, callback) {
         const filesPath = join(module_.path, path);
         if (existsSync(filesPath)) {
-          listFiles(filesPath).forEach(filePath => callback(require(filePath)),
-          );
+          const files = listFiles(filesPath);
+          for (let i=0;i<files.length;i+=1) {
+            await callback(require(files[i]));
+          };
         }
       };
         // Loading routers
-      loadFiles('routers', elAppRouter => elApp.registerRouter(elAppRouter));
+      await loadFiles('routers', elAppRouter => elApp.registerRouter(elAppRouter));
       // Loading services
-      loadFiles('services', elAppService => elApp.registerService(elAppService));
+      await loadFiles('services', elAppService => elApp.registerService(elAppService));
       // Initializing module
       if (typeof module_.init !== "undefined") {
         await module_.init(elApp);
       }
       module_.status = 'loaded';
-      //console.log(`[Module Loader] loaded: ${moduleName}`);
+      trace(elApp, `Loaded: ${moduleName}`);
       resolve();
     } else if (module_.status === 'loaded') {
+      trace(elApp, `already loaded: ${moduleName}`);
       resolve();
     } else {
       error = `[ Module Loader ] Error: module status error: ${moduleName}`;
@@ -82,17 +103,20 @@ const load = async function load(elApp) {
           path: dir,
           elApp,
         });
-        modules[module_.name] = module_;
+        if (typeof modules[module_.name] === "undefined") {
+          modules[module_.name] = module_;
+        }
+        else error(elApp, `Duplicate module name: ${module_.name}`)
       }
       catch(e) {
-        console.log(`[ Module Loader ] ignoring folder: ${dir}`);
+        debug(elApp, `Ignoring folder: ${dir}`);
       }
     });
     /* eslint-disable */
     for (const moduleName of Object.keys(modules)) {
-      //console.log(`ROOT start: ${moduleName}`);
+      trace(elApp, `Loading module starts: ${moduleName}`);
       await loadModule(elApp, modules, moduleName);
-      //console.log(`ROOT end: ${moduleName}`);
+      trace(elApp, `Loading module ends: ${moduleName}`);
     }
     resolve();
   }));

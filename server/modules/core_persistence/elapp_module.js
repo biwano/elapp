@@ -7,9 +7,10 @@
 module.exports = {
   name: 'core_persistence',
   dependencies(elApp) {
-    return `persistence_${elApp.getConfig('persistence.backend')}`;
+    return ['core_logging', `persistence_${elApp.getConfig('persistence.backend')}`];
   },
   init(elApp) {
+    elApp.logService.trace('persistence', 'Connecting');
     return elApp.persistence.connect();
   },
 

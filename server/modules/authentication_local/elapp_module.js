@@ -1,7 +1,7 @@
 
 module.exports = {
   name: 'authentication_local',
-  dependencies: ['core_authentication', 'core_documents'],
+  dependencies: ['core_authentication', 'core_documents', 'core_logging'],
   async init(elApp) {
     // Definition of the user collection
     const userSchemaDefinition = {
@@ -10,13 +10,14 @@ module.exports = {
       apikey: { type: 'keyword' },
     };
 
-    await elApp.documentService.registerSchema({ identifier: 'user',
+    elApp.logService.debug('authentication', 'Registering user schema');
+    await elApp.schemaService.register({ identifier: 'user',
       key: 'login',
       fields: userSchemaDefinition });
 
     // Create admin user if it does not exist
-    console.log('[ AuthLocal ] Ensuring admin user');
-    return elApp.documentService.createDocument('user', {
+    elApp.logService.debug('authentication', 'Ensuring admin user');
+    return elApp.documentService.create('user', {
       login: 'admin',
       password: 'admin',
       apikey: '',

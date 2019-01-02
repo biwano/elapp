@@ -2,21 +2,40 @@ const express = require('express');
 
 const router = express.Router();
 
-function capitalizeFirstLetter(string) {
-  return string.charAt(0).toUpperCase() + string.slice(1);
-}
-// Middleware to inject the authenticated user to the request
-router.use('/', (req, res, next) => {
-  const config = req.elApp.config.authentication;
-  for (let i = 0; i < config.chain.length; i += 1) {
-    const chainElement = config.chain[i];
-    const authServiceName = `auth${capitalizeFirstLetter(chainElement.method)}Service`;
-    const authenticationService = req.elApp[authServiceName];
-    const user = authenticationService.authenticate(req, chainElement);
-    if (user !== undefined) {
-      req.user = user;
-      break;
+
+// Middleware to authenticate the request
+router.use('/', async (req, res, next) => {
+  // Preparing each authentication module in the authentication chain
+  await req.elApp.authService.forAllServices((chainElement, authServiceName, authService) => {
+    if (typeof authService.preAuth !== 'undefined') {
+      req.elApp.logService.trace('authentication', `Preparing ${authServiceName}`);
+      return authService.preAuth(req, chainElement, res);
     }
+    return Promise.resolve();
+  });
+
+  // Trying each authentication module in the authentication chain
+  await req.elApp.authService.forAllServices((chainElement, authServiceName, authService) =>
+    new Promise(async (resolve) => {
+      req.elApp.logService.trace('authentication', `Trying ${authServiceName}`);
+      const login = await authService.authenticate(req, chainElement, res);
+      if (login !== undefined) {
+        req.elApp.logService.trace('authentication', `Authentication successful '${login}'`);
+        req.user = { login };
+        resolve(true);
+      } else resolve();
+    }));
+
+  // Cleaning up each authentication module in the authentication chain
+  await req.elApp.authService.forAllServices(async (chainElement, authServiceName, authService) => {
+    if (typeof authService.postAuth !== 'undefined') {
+      req.elApp.logService.trace('authentication', `Cleaning up ${authServiceName}`);
+      return authService.postAuth(req, chainElement, res);
+    }
+    return Promise.resolve();
+  });
+  if (typeof req.user === 'undefined') {
+    req.elApp.logService.trace('authentication', 'No successful authentication methods');
   }
   next();
 });
