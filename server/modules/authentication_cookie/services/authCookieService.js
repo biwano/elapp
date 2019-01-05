@@ -1,18 +1,37 @@
 const sessionMaker = require('express-session');
 
+function capitalizeFirstLetter(string) {
+  return string.charAt(0).toUpperCase() + string.slice(1);
+}
+
 const service = async function service(elApp) {
-  const config = await elApp.authService.getServiceConfig('cookie');
-  const secret = config.secret;
-  const session = sessionMaker({
-    secret,
-    resave: false,
-    saveUninitialized: true,
-    cookie: { secure: false },
-  });
   return {
+    //
+    async getSession() {
+      if (typeof this.session === 'undefined') {
+        const config = await elApp.authService.getServiceConfig('cookie');
+        const secret = config.secret;
+        const storeName = config.store || 'memory';
+        const storeServiceName = `authCookie${capitalizeFirstLetter(storeName)}StoreService`;
+        const storeService = elApp[storeServiceName];
+        elApp.logService.debug('authentication', `Creating cookie based session using store '${storeServiceName}'`);
+        elApp.logService.trace('authentication', `Options ${JSON.stringify(config.storeOptions)}'`);
+        const store = await storeService.getStore(config.storeOptions);
+        this.session = sessionMaker({
+          secret,
+          resave: false,
+          saveUninitialized: true,
+          cookie: { secure: false },
+          store,
+          //
+        });
+      }
+      return this.session;
+    },
     // Setting up the session middleware
     preAuth(req, config, res) {
-      return new Promise((resolve) => {
+      return new Promise(async (resolve) => {
+        const session = await this.getSession(req.elApp);
         session(req, res, () => { resolve(); });
       });
     },
@@ -27,7 +46,6 @@ const service = async function service(elApp) {
       if (typeof req.user !== 'undefined' && req.user.login !== req.session.login) {
         elApp.logService.trace('authentication', `Saving credentials '${req.user.login}' in sesson`);
         req.session.login = req.user.login;
-        console.log(req.session.login);
       }
       return Promise.resolve();
     },

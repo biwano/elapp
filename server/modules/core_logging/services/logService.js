@@ -13,6 +13,13 @@ const service = function service(elApp) {
         elApp.getConfig('log.level',
           'info'));
     },
+    logLevelToName(level) {
+      let res;
+      Object.keys(logLevels).forEach((key) => {
+        if (logLevels[key] === level) res = key;
+      });
+      return res;
+    },
     // Main logging function
     log(level, category, data) {
       // Checking log level
@@ -21,11 +28,12 @@ const service = function service(elApp) {
       }
       if (level <= this.getLogLevel(category)) {
         const date = new Date();
+        const levelName = this.logLevelToName(level).toUpperCase();
         const logDestinations = elApp.getConfig(`log.${category}.destinations`,
           elApp.getConfig('log.destinations',
             ['logService']));
         logDestinations.forEach((destination) => {
-          elApp[destination].write(`[ ${category} ] ${date.toLocaleString()}: ${data}`);
+          elApp[destination].write(`[ ${category} ] ${levelName}: ${date.toLocaleString()}: ${data}`);
         });
       }
     },

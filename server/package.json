@@ -28,6 +28,7 @@
     "express": "^4.16.4",
     "express-session": "^1.15.6",
     "node-cache": "^4.2.0",
+    "session-file-store": "^1.2.0",
     "uuid": "^3.3.2"
   },
   "devDependencies": {

@@ -12,7 +12,12 @@ module.exports = {
   authentication: {
     chain: [
       { method: 'local' },
-      { method: 'cookie', secret: 'the cookie key' },
+      { method: 'cookie',
+        secret: 'the cookie key',
+        store: 'file',
+        storeOptions: {
+          path: '/tmp/sessions',
+        } },
       { method: 'anonymous',
         login: 'anonymous',
       },
