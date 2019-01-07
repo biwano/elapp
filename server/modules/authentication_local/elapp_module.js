@@ -11,13 +11,13 @@ module.exports = {
     };
 
     elApp.logService.debug('authentication', 'Registering user schema');
-    await elApp.schemaService.register({ identifier: 'user',
+    await elApp.SchemaService(['group:admin']).register({ identifier: 'user',
       key: 'login',
       fields: userSchemaDefinition });
 
     // Create admin user if it does not exist
     elApp.logService.debug('authentication', 'Ensuring admin user');
-    return elApp.documentService.create('user', {
+    return elApp.DocumentService(['group:admin']).create('user', {
       login: 'admin',
       password: 'admin',
       apikey: '',

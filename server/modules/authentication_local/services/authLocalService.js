@@ -7,7 +7,7 @@ const service = function service(elApp) {
       const encrypted = crypto.createHmac('sha1', key).update(password).digest('hex');
       return encrypted;
     },
-    async authenticate(req, config) {
+    async authenticate(req) {
       let user = null;
       const key = req.headers['ELAPP-API-KEY'];
       const login = req.headers['ELAPP-LOGIN'];

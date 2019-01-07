@@ -1,6 +1,6 @@
 const elasticsearch = require('elasticsearch');
 
-module.exports = function init(elApp) {
+const service = function service(elApp) {
   const persistence = {};
 
   persistence.elApp = elApp;
@@ -65,8 +65,6 @@ module.exports = function init(elApp) {
         },
       },
     };
-    // console.log(body);
-    // console.log(filter);
     return this.es.search({
       index,
       body,
@@ -85,8 +83,10 @@ module.exports = function init(elApp) {
       body: document,
     });
   };
-
-  elApp.persistence = persistence;
-//  return new Promise(resolve => resolve());
+  return persistence;
 };
 
+module.exports = {
+  name: 'persistenceElasticsearchService',
+  service,
+};

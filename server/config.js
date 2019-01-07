@@ -4,6 +4,9 @@ module.exports = {
     host: 'localhost:9200',
     log: 'info',
   },
+  groups: {
+    backend: 'local',
+  },
   log: { level: 'info',
     persistence: { level: 'info' },
     moduleloader: { level: 'debug' },

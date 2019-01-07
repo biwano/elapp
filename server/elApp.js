@@ -1,10 +1,20 @@
 const config = require('./config.js');
 
+function capitalizeFirstLetter(string) {
+  return string.charAt(0).toUpperCase() + string.slice(1);
+}
 const elAppMaker = function elAppMaker(app) {
   const elApp = {};
   elApp.express = app;
   elApp.services = {};
   elApp.config = config;
+
+  elApp.utils = {
+    camelCase(name) {
+      const items = name.split('_');
+      return [items[0]].concat(items.slice(1).map(t => capitalizeFirstLetter(t))).join('');
+    },
+  };
 
   elApp.getConfig = function getConfig(path, def) {
     const elems = path.split('.');
