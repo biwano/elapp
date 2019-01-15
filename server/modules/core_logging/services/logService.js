@@ -26,6 +26,9 @@ const service = function service(elApp) {
       if (typeof data === 'undefined' || typeof category === 'undefined' || typeof level === 'undefined') {
         elApp.logService.error('logging', 'Bad call to logging function');
       }
+      if (typeof data !== 'string') {
+        data = JSON.stringify(data);
+      }
       if (level <= this.getLogLevel(category)) {
         const date = new Date();
         const levelName = this.logLevelToName(level).toUpperCase();

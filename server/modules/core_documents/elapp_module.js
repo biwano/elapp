@@ -7,7 +7,7 @@ module.exports = {
       identifier: { type: 'keyword' },
       key: { type: 'list', objectsType: 'keyword' },
       fields: { type: 'object' },
-      defaultAcls: { type: 'list', objectsType: 'keyword' },
+      defaultAcls: { type: 'list', objectsType: 'object' },
     };
     return elApp.SchemaService(['group:admin']).register({ identifier: 'schema',
       key: 'identifier',

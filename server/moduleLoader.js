@@ -56,7 +56,7 @@ const loadModule = async function loadModule(elApp, modules, moduleName) {
         }
       }
       // Loading module
-      debug(elApp, `loading: ${moduleName}`);
+      debug(elApp, `Loading: ${moduleName}`);
       const loadFiles = async function loadFiles(path, callback) {
         const filesPath = join(module_.path, path);
         if (existsSync(filesPath)) {

@@ -3,14 +3,16 @@ module.exports = {
     backend: 'elasticsearch',
     host: 'localhost:9200',
     log: 'info',
+    drop: false,
   },
   groups: {
     backend: 'local',
   },
   log: { level: 'info',
-    persistence: { level: 'info' },
+    persistence: { level: 'debug' },
     moduleloader: { level: 'debug' },
     authentication: { level: 'trace' },
+    documents: { level: 'trace' },
   },
   authentication: {
     chain: [
