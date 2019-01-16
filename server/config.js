@@ -2,8 +2,8 @@ module.exports = {
   persistence: {
     backend: 'elasticsearch',
     host: 'localhost:9200',
-    log: 'info',
-    drop: false,
+    log: 'debug',
+    drop: true,
   },
   groups: {
     backend: 'local',

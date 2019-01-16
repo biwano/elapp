@@ -8,6 +8,7 @@ const elAppMaker = function elAppMaker(app) {
   elApp.express = app;
   elApp.services = {};
   elApp.config = config;
+  elApp.hooks = {};
 
   elApp.utils = {
     camelCase(name) {
@@ -35,6 +36,16 @@ const elAppMaker = function elAppMaker(app) {
   };
   elApp.registerService = async function registerService(elAppService) {
     elApp[`${elAppService.name}`] = await elAppService.service(elApp);
+  };
+  elApp.registerHook = function registerHook(category, func, context) {
+    this.hooks[category] = this.hooks[category] || [];
+    this.hooks[category].push({ func, context });
+  };
+  elApp.invokeHooks = function invokeHooks(category, ...args) {
+    this.hooks[category] = this.hooks[category] || [];
+    this.hooks[category].forEach(({ func, context }) => {
+      func.apply(context, args);
+    });
   };
   elApp.getMethod = function getMethod(category, name) {
     return elApp.methods[category][name];

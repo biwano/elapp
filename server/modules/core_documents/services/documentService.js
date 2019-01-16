@@ -1,5 +1,6 @@
 const uuidv1 = require('uuid/v1');
 const NodeCache = require('node-cache');
+const codecs = require('../helpers/codecs');
 
 const service = function service(elApp) {
   const defaultAcls = elApp.getConfig('document.defaultAcls', [{ 'group:admin': 'write' }]);
@@ -14,7 +15,7 @@ const service = function service(elApp) {
         return this.getSchemaService(doc).schema;
       },
       async create(schemaId, body_) {
-        const body = Object.assign({}, body_);
+        let body = Object.assign({}, body_);
         body.$schema = schemaId;
 
         if (!await this.keyUsed(schemaId, body)) {
@@ -23,11 +24,14 @@ const service = function service(elApp) {
           body.$uuid = uuidv1();
           // Ensure acls
           if (body.$localAcls === 'undefined') { body.$localAcls = []; }
+          //
+          elApp.invokeHooks('document_before_create', body);
           // Checks the document consistency
           this.check(body);
           // Saves the document
           elApp.logService.trace('documents', `Creating document with schema: ${schemaId} ${body.$uuid}`);
-          return elApp.persistence.createDocument(schemaId, body.$uuid, body).then((doc) => {
+          body = codecs.encode(body);
+          return elApp.persistence.create(schemaId, body.$uuid, body).then((doc) => {
             this.updateAcls(body.$uuid);
             return doc;
           });
@@ -44,10 +48,7 @@ const service = function service(elApp) {
         const doc = await elApp.persistence.get(uuid);
         // TODO: inherit parent acls
         const $acls = (doc.$localAcls || []).concat(defaultAcls);
-        elApp.persistence.updateDocument(doc.$schema, uuid, { $acls });
-
-
-        // const schema = await this.getelApp.SchemaService(acls, body.$schema).schema;
+        elApp.persistence.update(doc.$schema, uuid, { $acls });
       },
       async check(body) {
         const schema = await elApp.SchemaService(acls, body.$schema).schema;
@@ -65,10 +66,11 @@ const service = function service(elApp) {
       },
       async getByKey(schemaId, key) {
         let doc = null;
-        const matchParams = { $schema: schemaId };
+        let matchParams = { $schema: schemaId };
         Object.assign(matchParams, await this.keyFromBody(schemaId, key));
-        doc = await elApp.persistence.matchDocument(matchParams);
-        return doc;
+        matchParams = codecs.encode(matchParams);
+        doc = await elApp.persistence.matchOne(matchParams);
+        return codecs.decode(doc);
       },
     };
   };

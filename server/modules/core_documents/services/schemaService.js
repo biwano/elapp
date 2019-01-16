@@ -9,7 +9,7 @@ const service = function service(elApp) {
           let schema = cache.get(`schema_${schemaId}`);
           // elApp.logService.trace('documents', `Getting schema '${schemaId}'`);
           if (typeof schema === 'undefined') {
-            schema = await elApp.persistence.matchDocument({ $schema: 'schema', identifier: schemaId });
+            schema = await elApp.persistence.matchOne({ $schema: 'schema', identifier: schemaId });
             if (schema !== null) {
               cache.set(`schema_${schemaId}`, schema);
             } else reject(`[ DocumentService ] Schema not found: ${schemaId}`);

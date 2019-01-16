@@ -1,4 +1,5 @@
 const elasticsearch = require('elasticsearch');
+const queryHelper = require('../helpers/query');
 
 const service = function service(elApp) {
   const persistence = {};
@@ -10,27 +11,6 @@ const service = function service(elApp) {
   persistence.log = elApp.getConfig('persistence.log');
   persistence.drop = elApp.getConfig('persistence.drop', false);
 
-  const decode = function decode(hit) {
-    const doc = {};
-    Object.keys(hit._source).forEach((esKey) => {
-      let key;
-      const keyParts = esKey.split('_');
-      if (keyParts.length > 1) key = keyParts[1];
-      else key = esKey;
-      doc[key] = hit._source[esKey];
-    });
-    return doc;
-  };
-  const encode = function encode(doc) {
-    const hit = {};
-    Object.keys(doc).forEach((key) => {
-      let esKey;
-      if (key.startsWith('$')) esKey = key;
-      else esKey = `${doc.$schema}_${key}`;
-      hit[esKey] = doc[key];
-    });
-    return hit;
-  };
 
   persistence.connect = function connect() {
     const es = new elasticsearch.Client({
@@ -74,9 +54,9 @@ const service = function service(elApp) {
   persistence.registerSchema = async function registerSchema(params) {
     const identifier = params.identifier;
     const fields = params.fields;
-    // Create the index if it does not exist
     const index = `${this.docIndex}`;
     const properties = {};
+    // create mapping properties
     Object.keys(fields).forEach((fieldName) => {
       // TODO: clean up field conversion from elapp to elasticsearch
       const elAppDefinition = fields[fieldName];
@@ -100,52 +80,38 @@ const service = function service(elApp) {
     });
   };
 
-  persistence.matchDocuments = function getDocuments(params) {
-    const index = `${this.docIndex}`;
-    const filter = [];
-
-    Object.keys(encode(params)).forEach((key) => {
-      const term = {};
-      if (typeof params[key] !== 'undefined') {
-        term[key] = params[key];
-        filter.push({ term });
-      }
-    });
-    const body = {
-      query: {
-        bool: {
-          filter,
-        },
-      },
-    };
+  persistence.search = function search(query) {
+    const options = query.query.options;
+    delete (query.query, 'options');
+    elApp.logService.debug('persistence', JSON.stringify(query.query));
+    const esQuery = queryHelper.encodeQuery(query.query);
+    const body = { query: esQuery };
+    Object.assign(body, options);
+    elApp.logService.debug('persistence', JSON.stringify(esQuery));
     return this.es.search({
-      index,
+      index: this.docIndex,
       body,
-    }).then(result => result.hits.hits.map(decode));
+    }).then(result => result.hits.hits.map(hit => hit._source));
   };
 
-  persistence.matchDocument = function matchDocument(matchParams) {
-    return this.matchDocuments(matchParams).then(
-      docs => (docs.length > 0 ? docs[0] : null));
-  };
   persistence.get = function get(uuid) {
     const index = this.docIndex;
     return this.es.get({
       index,
       type: this.docType,
       id: uuid,
-    }).then(result => decode(result));
+    }).then(hit => hit._source);
   };
-  persistence.createDocument = function createDocument(schemaId, uuid, doc) {
+  persistence.create = function createDocument(schemaId, uuid, doc) {
     const index = `${this.docIndex}`;
     return this.es.create({
       index,
       type: this.docType,
       id: uuid,
-      body: encode(doc),
+      body: doc,
     });
   };
-  persistence.updateDocument = async function updateDocument(schemaId, uuid, bodyParts) {
+  persistence.update = async function updateDocument(schemaId, uuid, bodyParts) {
     const doc = await this.get(uuid);
     Object.assign(doc, bodyParts);
     const index = `${this.docIndex}`;
@@ -153,7 +119,7 @@ const service = function service(elApp) {
       index,
       type: this.docType,
       id: uuid,
-      body: encode(doc),
+      body: doc,
     });
   };
   return persistence;
