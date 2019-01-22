@@ -7,13 +7,13 @@
 </template>
 
 <script>
-import Vuano from 'vuano';
+import Elapp from 'elapp';
 import Nav from '@/components/nav';
 
 export default {
   name: 'App',
-  mixins: [Vuano.Mixins.AuthMixin],
-  components: { navigation: Nav, messages: Vuano.Components.Messages },
+  mixins: [Elapp.Mixins.AuthMixin],
+  components: { navigation: Nav, messages: Elapp.Components.Messages },
   created() {
     this.messagePromiseCatcher(this.authGetUserInfo());
   },

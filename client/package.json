@@ -16,7 +16,6 @@
     "lodash.debounce": "^4.0.8",
     "moment": "^2.22.1",
     "uikit": "^3.0.0-beta.42",
-    "vuano": "^0.1.1",
     "vue": "^2.5.2",
     "vue-forms-mixin": "^0.4.2",
     "vue-router": "^3.0.1",

@@ -1,5 +1,5 @@
 import Vuex from 'vuex';
-import Vuano from 'vuano';
+import Elapp from 'elapp';
 import config from '@/config';
 
 
@@ -11,8 +11,8 @@ const createStore = function store() {
     mutations: {
     },
     modules: {
-      message: Vuano.Stores.MessagesStore,
-      auth: Vuano.Stores.AuthStore,
+      message: Elapp.Stores.MessagesStore,
+      auth: Elapp.Stores.AuthStore,
     },
   });
 };

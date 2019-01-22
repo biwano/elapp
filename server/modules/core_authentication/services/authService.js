@@ -33,6 +33,14 @@ const service = function service(elApp) {
         return Promise.resolve();
       });
     },
+    signOut(req, res) {
+      this.forAllServices(async (chainElement, authServiceName, authService) => {
+        if (typeof authService.signOut !== 'undefined') {
+          return authService.signOut(req, chainElement, res);
+        }
+        return Promise.resolve();
+      });
+    },
   };
 };
 

@@ -49,6 +49,12 @@ const service = async function service(elApp) {
       }
       return Promise.resolve();
     },
+    // Sign Out
+    signOut(req) {
+      elApp.logService.trace('authentication', `Destroying session '${req.session.user}'`);
+      req.session.destroy();
+      return Promise.resolve();
+    },
   };
 };
 

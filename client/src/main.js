@@ -6,7 +6,7 @@ import 'uikit/dist/css/uikit.min.css';
 import Vue from 'vue';
 import Vuex from 'vuex';
 import moment from 'moment';
-import Vuano from 'vuano';
+import Elapp from 'elapp';
 import createStore from '@/store/store';
 import App from './App';
 import router from './router/routes';
@@ -18,19 +18,19 @@ UIkit.use(Icons);
 
 Vue.config.productionTip = false;
 Vue.use(Vuex);
-Vue.use(Vuano, config);
+Vue.use(Elapp, config);
 const store = createStore();
-Vuano.loadLocale('en', en);
+Elapp.loadLocale('en', en);
 
 Vue.filter('formatDate', value => (value ? moment(String(value)).format('DD MMM YYYY hh:mm') : undefined));
 // Injecting mixins
-Vue.mixin(Vuano.Mixins.NavMixin);
-Vue.mixin(Vuano.Mixins.MessagesMixin);
+Vue.mixin(Elapp.Mixins.NavMixin);
+Vue.mixin(Elapp.Mixins.MessagesMixin);
 
 // Importing components globally
-Vue.component('suggestion', Vuano.Components.Suggestion);
-Vue.component('icon', Vuano.Components.Icon);
-Vue.component('boolean-radio', Vuano.Components.BooleanRadio);
+Vue.component('suggestion', Elapp.Components.Suggestion);
+Vue.component('icon', Elapp.Components.Icon);
+Vue.component('boolean-radio', Elapp.Components.BooleanRadio);
 
 /* eslint-disable no-new */
 new Vue({

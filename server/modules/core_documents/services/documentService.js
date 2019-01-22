@@ -5,6 +5,7 @@ const codecs = require('../helpers/codecs');
 const service = function service(elApp) {
   const defaultAcls = elApp.getConfig('document.defaultAcls', [{ 'group:admin': 'write' }]);
   return function makeService(acls) {
+    if (!Array.isArray(acls)) acls = [acls];
     return {
     // Creates a document if the key is not used
       cache: new NodeCache(),
@@ -60,14 +61,20 @@ const service = function service(elApp) {
         const schema = await schemaService.schema;
         if (typeof schema.key !== 'undefined') {
           key = {};
-          schema.key.forEach((keyName) => { key[keyName] = body[keyName]; });
+          schema.key.forEach((keyName) => {
+            key[keyName] = typeof body === 'object' ? body[keyName] : body;
+          });
         }
         return key;
       },
-      async getByKey(schemaId, key) {
+      async getByKey(schemaId, body) {
+        const key = await this.keyFromBody(schemaId, body);
+        return this.matchOne(schemaId, key);
+      },
+      async matchOne(schemaId, body) {
         let doc = null;
         let matchParams = { $schema: schemaId };
-        Object.assign(matchParams, await this.keyFromBody(schemaId, key));
+        Object.assign(matchParams, body);
         matchParams = codecs.encode(matchParams);
         doc = await elApp.persistence.matchOne(matchParams);
         return codecs.decode(doc);

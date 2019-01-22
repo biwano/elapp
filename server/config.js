@@ -3,7 +3,7 @@ module.exports = {
     backend: 'elasticsearch',
     host: 'localhost:9200',
     log: 'debug',
-    drop: true,
+    drop: false,
   },
   groups: {
     backend: 'local',

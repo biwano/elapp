@@ -17,31 +17,27 @@
 
       </div>
       <div class="uk-navbar-center">
+
       </div>
       <div class="uk-navbar-right">
-
           <ul class="uk-navbar-nav">
-              <li :hidden="loggedIn" :class="classActive('/register')">
-                <a href="#/registration_request">{{ L.register }}</a></li>
               <li :hidden="loggedIn" :class="classActive('/sign_in')">
                 <a href="#/sign_in">{{ L.sign_in }}</a></li>
               <li :hidden="!loggedIn">
-                <icon url="#/profile" icon="user" :size="1"></icon></li>
+                <icon url="#/profile" icon="user" :size="1"></icon>
+              </li>
               <li>
                 <icon icon="menu" :size="1"></icon>
                 <div class="uk-navbar-dropdown">
                     <ul class="uk-nav uk-navbar-dropdown-nav">
                         <li class="uk-nav-muted" style="white-space: nowrap">
-                          <a :hidden="!loggedIn" href="#/profile">{{ userName }}</a>
+                          <a href="#/profile">{{ userLogin }}</a>
                           <span :hidden="loggedIn">{{userName}}</span>
                            <icon :hidden="!loggedIn" @click="signOut()"
                                 icon="sign-out" :size="1"></icon>
                         </li>
                         <li class="uk-nav-divider"></li>
-                        <li :class="classActive('/games')">
-                          <a href="#/games">{{ L.my_games }}</a></li>
-                        <li class="uk-nav-divider"></li>
-                        <li class="uk-nav-muted">{{ L.bluejong }} {{ $store.state.version }}</li>
+                        <li class="uk-nav-muted">{{ $store.state.version }}</li>
                     </ul>
                 </div>
               </li>
@@ -53,11 +49,11 @@
 </template>
 
 <script>
-import vuano from 'vuano';
+import Elapp from 'elapp';
 
 export default {
   name: 'Nav',
-  mixins: [vuano.Mixins.AuthMixin],
+  mixins: [Elapp.Mixins.AuthMixin],
   data() {
     return {
     };

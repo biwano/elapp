@@ -1,4 +1,3 @@
-const bcrypt = require('bcrypt');
 
 module.exports = {
   name: 'authentication_local',
@@ -19,9 +18,7 @@ module.exports = {
     // Registering hook to encrypt password
     elApp.registerHook('document_before_create', (doc) => {
       if (doc.$schema === 'user') {
-        const saltRounds = 10;
-        const salt = bcrypt.genSaltSync(saltRounds);
-        doc.password = bcrypt.hashSync(doc.password, salt);
+        doc.password = elApp.authLocalService.encrypt(doc.password);
       }
     }, this);
     //     const result = await bcrypt.compare(password, user.auth.password);
