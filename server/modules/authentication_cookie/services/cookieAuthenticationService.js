@@ -9,22 +9,24 @@ const service = async function service(elApp) {
     //
     async getSession() {
       if (typeof this.session === 'undefined') {
-        const config = await elApp.authService.getServiceConfig('cookie');
+        const config = await elApp.authenticationService.getChainedServiceConfig('cookie');
         const secret = config.secret;
         const storeName = config.store || 'memory';
-        const storeServiceName = `authCookie${capitalizeFirstLetter(storeName)}StoreService`;
+        const storeServiceName = `cookieAuthentication${capitalizeFirstLetter(storeName)}StoreService`;
         const storeService = elApp[storeServiceName];
-        elApp.logService.debug('authentication', `Creating cookie based session using store '${storeServiceName}'`);
-        elApp.logService.trace('authentication', `Options ${JSON.stringify(config.storeOptions)}'`);
-        const store = await storeService.getStore(config.storeOptions);
-        this.session = sessionMaker({
-          secret,
-          resave: false,
-          saveUninitialized: true,
-          cookie: { secure: false },
-          store,
+        if (typeof storeService !== 'undefined') {
+          elApp.logService.debug('authentication', `Creating cookie based session using store '${storeServiceName}'`);
+          elApp.logService.trace('authentication', `Options ${JSON.stringify(config.storeOptions)}'`);
+          const store = await storeService.getStore(config.storeOptions);
+          this.session = sessionMaker({
+            secret,
+            resave: false,
+            saveUninitialized: true,
+            cookie: { secure: false },
+            store,
           //
-        });
+          });
+        } else elApp.logService.error('authorization', `Cannot find service ${storeServiceName}`);
       }
       return this.session;
     },
@@ -59,6 +61,6 @@ const service = async function service(elApp) {
 };
 
 module.exports = {
-  name: 'authCookieService',
+  name: 'cookieAuthenticationService',
   service,
 };

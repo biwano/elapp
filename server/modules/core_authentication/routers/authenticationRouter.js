@@ -6,7 +6,7 @@ const router = express.Router();
 // Middleware to authenticate the request
 router.use('/', async (req, res, next) => {
   // Preparing each authentication module in the authentication chain
-  await req.elApp.authService.forAllServices((chainElement, authServiceName, authService) => {
+  await req.elApp.authenticationService.forAllChainedServices((chainElement, authServiceName, authService) => {
     if (typeof authService.preAuth !== 'undefined') {
       req.elApp.logService.debug('authentication', `Preparing ${authServiceName}`);
       return authService.preAuth(req, chainElement, res);
@@ -15,7 +15,7 @@ router.use('/', async (req, res, next) => {
   });
 
   // Trying each authentication module in the authentication chain
-  await req.elApp.authService.forAllServices((chainElement, authServiceName, authService) =>
+  await req.elApp.authenticationService.forAllChainedServices((chainElement, authServiceName, authService) =>
     new Promise(async (resolve) => {
       req.elApp.logService.debug('authentication', `Trying ${authServiceName}`);
       const login = await authService.authenticate(req, chainElement, res);
@@ -27,7 +27,7 @@ router.use('/', async (req, res, next) => {
     }));
 
   // Cleaning up each authentication module in the authentication chain
-  await req.elApp.authService.forAllServices(async (chainElement, authServiceName, authService) => {
+  await req.elApp.authenticationService.forAllChainedServices(async (chainElement, authServiceName, authService) => {
     if (typeof authService.postAuth !== 'undefined') {
       req.elApp.logService.debug('authentication', `Cleaning up ${authServiceName}`);
       return authService.postAuth(req, chainElement, res);
@@ -46,7 +46,7 @@ router.get('/auth', (req, res) => {
 // Signout
 router.delete('/auth', async (req, res) => {
   try {
-    await req.elApp.authService.signOut(req);
+    await req.elApp.authenticationService.signOut(req);
     res.sendSuccess();
   } catch (e) {
     res.sendError(e);

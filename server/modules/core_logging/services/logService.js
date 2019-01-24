@@ -1,6 +1,6 @@
 
 const service = function service(elApp) {
-  const logLevels = { error: 0, warning: 1, info: 2, debug: 3, trace: 4 };
+  const logLevels = { error: 0, warning: 1, info: 2, trace: 3, debug: 4 };
   const serviceInstance = {
     write(data) {
       console.log(data);

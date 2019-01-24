@@ -7,6 +7,6 @@ const service = async function service() {
 };
 
 module.exports = {
-  name: 'authCookieMemoryStoreService',
+  name: 'cookieAuthenticationMemoryStoreService',
   service,
 };

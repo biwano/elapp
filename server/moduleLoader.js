@@ -50,13 +50,13 @@ const loadModule = async function loadModule(elApp, modules, moduleName) {
       if (typeof dependencies === 'object') {
         /* eslint-disable */
         for (const dependencyName of dependencies) {
-          trace(elApp, `Loading dependency starts: ${dependencyName}`);
+          debug(elApp, `Loading dependency starts: ${dependencyName}`);
           await loadModule(elApp, modules, dependencyName);
-          trace(elApp, `Loading dependency ends: ${dependencyName}`);
+          debug(elApp, `Loading dependency ends: ${dependencyName}`);
         }
       }
       // Loading module
-      debug(elApp, `Loading: ${moduleName}`);
+      trace(elApp, `Loading: ${moduleName}`);
       const loadFiles = async function loadFiles(path, callback) {
         const filesPath = join(module_.path, path);
         if (existsSync(filesPath)) {
@@ -78,7 +78,7 @@ const loadModule = async function loadModule(elApp, modules, moduleName) {
       trace(elApp, `Loaded: ${moduleName}`);
       resolve();
     } else if (module_.status === 'loaded') {
-      trace(elApp, `already loaded: ${moduleName}`);
+      debug(elApp, `already loaded: ${moduleName}`);
       resolve();
     } else {
       error = `[ Module Loader ] Error: module status error: ${moduleName}`;
@@ -114,9 +114,9 @@ const load = async function load(elApp) {
     });
     /* eslint-disable */
     for (const moduleName of Object.keys(modules)) {
-      trace(elApp, `Loading module starts: ${moduleName}`);
+      debug(elApp, `Loading module starts: ${moduleName}`);
       await loadModule(elApp, modules, moduleName);
-      trace(elApp, `Loading module ends: ${moduleName}`);
+      debug(elApp, `Loading module ends: ${moduleName}`);
     }
     resolve();
   }));

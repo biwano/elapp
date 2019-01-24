@@ -18,7 +18,7 @@ const service = function service(elApp) {
       const documentService = req.elApp.DocumentService('group:admin');
       if (typeof key !== 'undefined') {
         // Api key authentication
-        user = await documentService.matchOne('user', { apikey });
+        user = await documentService.matchOne({ $schema: 'user', apikey });
       } else if (typeof login !== 'undefined' && typeof password !== 'undefined') {
         // Password authentication
         const tmpUser = await documentService.getByKey('user', login);
@@ -33,6 +33,6 @@ const service = function service(elApp) {
 };
 
 module.exports = {
-  name: 'authLocalService',
+  name: 'localAuthenticationService',
   service,
 };

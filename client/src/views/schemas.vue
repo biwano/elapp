@@ -1,24 +1,22 @@
 <template>
     <div class="uk-child-width-1-3@m uk-grid-small uk-grid-match" uk-grid>
-      <div>
-        <a href="#/schemas">
-          <div class="uk-card uk-card-default uk-card-body">
-              <h3 class="uk-card-title">{{ L.schemas }}</h3>
-          </div>
-        </a>
-      </div>
+      <documents-table :query="query"></documents-table>
   </div>
 </template>
 
 <script>
+import Elapp from 'elapp';
 
 export default {
   name: 'Home',
+  components: { 'documents-table': Elapp.Components.DocumentsTable },
   data() {
     return {
+      query: {},
     };
   },
   created() {
+    this.query = { $schema: 'schema' };
   },
   methods: {
   },

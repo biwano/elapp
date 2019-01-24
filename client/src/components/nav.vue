@@ -30,14 +30,17 @@
                 <icon icon="menu" :size="1"></icon>
                 <div class="uk-navbar-dropdown">
                     <ul class="uk-nav uk-navbar-dropdown-nav">
-                        <li class="uk-nav-muted" style="white-space: nowrap">
-                          <a href="#/profile">{{ userLogin }}</a>
-                          <span :hidden="loggedIn">{{userName}}</span>
-                           <icon :hidden="!loggedIn" @click="signOut()"
-                                icon="sign-out" :size="1"></icon>
-                        </li>
-                        <li class="uk-nav-divider"></li>
-                        <li class="uk-nav-muted">{{ $store.state.version }}</li>
+                      <li class="uk-nav-muted" style="white-space: nowrap">
+                        <a href="#/profile">{{ userLogin }}</a>
+                        <span :hidden="loggedIn">{{userName}}</span>
+                        <icon :hidden="!loggedIn" @click="signOut()"
+                              icon="sign-out" :size="1"></icon>
+                      </li>
+                      <li class="uk-nav-divider"></li>
+                      <li class="uk-nav-muted">
+                        <a href="#/schemas">{{ L.schemas }}</a>
+                     </li>
+                      <li class="uk-nav-muted">{{ $store.state.version }}</li>
                     </ul>
                 </div>
               </li>

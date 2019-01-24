@@ -1,5 +1,8 @@
 export default {
+  // Authentication
   sign_in: 'Sign in',
   error_invalid_credentials: 'Invalid credentials',
-  // Generic
+  // Schemas
+  schemas: 'Schemas',
+
 };

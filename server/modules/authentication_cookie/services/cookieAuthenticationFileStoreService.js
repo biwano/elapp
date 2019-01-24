@@ -11,6 +11,6 @@ const service = async function service(elApp) {
 };
 
 module.exports = {
-  name: 'authCookieFileStoreService',
+  name: 'cookieAuthenticationFileStoreService',
   service,
 };

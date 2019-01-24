@@ -6,6 +6,7 @@ import Suggestion from './components/suggestion';
 import Tabs from './components/tabs';
 
 import LocalAuth from './components/localAuth';
+import DocumentsTable from './components/documentsTable';
 
 import { LocalesMixin, locales } from './mixins/localesMixin';
 import AuthMixin from './mixins/authMixin';
@@ -27,6 +28,7 @@ export default {
     Tabs,
 
     LocalAuth,
+    DocumentsTable,
   },
   Mixins: {
     NavMixin,

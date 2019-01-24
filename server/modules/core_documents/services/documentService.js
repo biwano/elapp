@@ -69,15 +69,22 @@ const service = function service(elApp) {
       },
       async getByKey(schemaId, body) {
         const key = await this.keyFromBody(schemaId, body);
-        return this.matchOne(schemaId, key);
+        key.$schema = schemaId;
+        return this.matchOne(key);
       },
-      async matchOne(schemaId, body) {
+      async matchOne(body) {
         let doc = null;
-        let matchParams = { $schema: schemaId };
-        Object.assign(matchParams, body);
+        let matchParams = Object.assign({}, body);
         matchParams = codecs.encode(matchParams);
         doc = await elApp.persistence.matchOne(matchParams);
         return codecs.decode(doc);
+      },
+      async match(body) {
+        let docs = [];
+        let matchParams = Object.assign({}, body);
+        matchParams = codecs.encode(matchParams);
+        docs = await elApp.persistence.match(matchParams);
+        return docs.map(doc => codecs.decode(doc));
       },
     };
   };

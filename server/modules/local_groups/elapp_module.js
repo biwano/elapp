@@ -1,11 +1,13 @@
 module.exports = {
-  name: 'groups_local',
+  name: 'local_groups',
   dependencies: 'core_documents',
   async init(elApp) {
     // Definition of the groups collection
     const groupSchemaDefinition = {
       identifier: { type: 'keyword' },
       description: { type: 'text' },
+      localUsers: { type: 'list', objectsType: 'keyword' },
+      groups: { type: 'list', objectsType: 'keyword' },
       users: { type: 'list', objectsType: 'keyword' },
     };
 

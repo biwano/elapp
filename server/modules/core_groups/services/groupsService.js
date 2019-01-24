@@ -1,8 +1,16 @@
+
+const service = function service(elApp) {
+  return elApp.chainedService({
+    getConfig() {
+      return elApp.config.groups;
+    },
+    getServiceName(method) {
+      return `${method}GroupsService`;
+    },
+  });
+};
+
 module.exports = {
   name: 'groupsService',
-  service(elApp) {
-    const serviceId = elApp.getConfig('groups.backend', 'local');
-    const serviceName = elApp.utils.camelCase(`groups_${serviceId}_service`);
-    return elApp[serviceName];
-  },
+  service,
 };

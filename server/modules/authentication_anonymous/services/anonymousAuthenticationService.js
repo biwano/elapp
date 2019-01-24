@@ -15,6 +15,6 @@ const service = function service(elApp) {
 };
 
 module.exports = {
-  name: 'authAnonymousService',
+  name: 'anonymousAuthenticationService',
   service,
 };

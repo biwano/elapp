@@ -6,12 +6,14 @@ module.exports = {
     drop: false,
   },
   groups: {
-    backend: 'local',
+    chain: [{ method: 'local' }],
   },
   log: { level: 'info',
     persistence: { level: 'debug' },
-    moduleloader: { level: 'debug' },
+    moduleloader: { level: 'trace' },
     authentication: { level: 'trace' },
+    authorization: { level: 'trace' },
+    groups: { level: 'debug' },
     documents: { level: 'trace' },
   },
   authentication: {
@@ -28,5 +30,10 @@ module.exports = {
       },
     ],
     local: { encryptionkey: 'the key' },
+  },
+  authorization: {
+    chain: [
+      { method: 'local' },
+    ],
   },
 };
