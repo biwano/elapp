@@ -1,7 +1,5 @@
 <template>
-    <div class="uk-child-width-1-3@m uk-grid-small uk-grid-match" uk-grid>
-      <documents-table :query="query"></documents-table>
-  </div>
+      <documents-table :filter="filter"></documents-table>
 </template>
 
 <script>
@@ -9,14 +7,15 @@ import Elapp from 'elapp';
 
 export default {
   name: 'Home',
+  mixins: [Elapp.Mixins.DocumentMixin],
   components: { 'documents-table': Elapp.Components.DocumentsTable },
   data() {
     return {
-      query: {},
+      filter: {},
     };
   },
   created() {
-    this.query = { $schema: 'schema' };
+    this.filter = this.matchQuery({ $schema: 'schema' }).filter;
   },
   methods: {
   },

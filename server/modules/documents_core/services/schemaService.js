@@ -40,7 +40,7 @@ const service = function service(elApp) {
           elApp.logService.debug('documents', `Caching schema '${realm}_${identifier}'`);
 
           // Save the definition of the schema in the schema collection if it does not exist
-          return documentService.create('schema', schema);
+          return documentService.createIfAbsent('schema', schema);
         } catch (e) {
           const error = `Error registering schema '${realm} ${identifier}' ${e}`;
           elApp.logService.error('documents', error);

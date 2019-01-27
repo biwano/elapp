@@ -5,18 +5,18 @@ module.exports = {
     log: 'debug',
   },
   documents: {
-    dropDefaultRealm: 'false',
+    dropDefaultRealm: false,
     defaultRealm: 'dev',
   },
   groups: {
     chain: [{ method: 'local' }],
   },
   log: { level: 'info',
-    persistence: { level: 'trace' },
-    moduleloader: { level: 'trace' },
-    authentication: { level: 'trace' },
+    persistence: { level: 'debug' },
+    moduleloader: { level: 'info' },
+    authentication: { level: 'info' },
     authorization: { level: 'trace' },
-    groups: { level: 'debug' },
+    groups: { level: 'info' },
     documents: { level: 'trace' },
   },
   authentication: {

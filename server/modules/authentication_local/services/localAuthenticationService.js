@@ -12,11 +12,11 @@ const service = function service(elApp) {
     },
     async authenticate(req) {
       let user = null;
-      const realm = req.headers['elapp-realm'];
+      const realm = req.headers['elapp-realm'] || elApp.realmService.defaultRealm;
       const apikey = req.headers['elapp-api-key'];
       const login = req.headers['elapp-login'];
       const password = req.headers['elapp-password'];
-      const documentService = req.elApp.DocumentService('group:admin');
+      const documentService = req.elApp.DocumentService('group:admin', realm);
       if (typeof key !== 'undefined') {
         // Api key authentication
         user = await documentService.matchOne({ $schema: 'user', apikey });

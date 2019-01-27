@@ -21,12 +21,9 @@ module.exports = {
         doc.password = elApp.localAuthenticationService.encrypt(doc.password);
       }
     }, this);
-    //     const result = await bcrypt.compare(password, user.auth.password);
-
-
     // Create admin user if it does not exist
     elApp.logService.debug('authentication', 'Ensuring admin user');
-    return elApp.DocumentService(['group:admin']).create('user', {
+    return elApp.DocumentService(['group:admin']).createIfAbsent('user', {
       login: 'admin',
       password: 'admin',
       apikey: '',

@@ -13,7 +13,7 @@ module.exports = {
     };
     let promise;
     // Drop default Realm
-    if (elApp.getConfig('documents.dropDefaultRealm')) {
+    if (elApp.getConfig('documents.dropDefaultRealm') === true) {
       promise = elApp.realmService.newRealm(elApp.realmService.defaultRealm, true);
     } else promise = Promise.resolve();
     return promise.then(() => {

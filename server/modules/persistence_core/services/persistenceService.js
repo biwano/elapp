@@ -8,6 +8,7 @@ module.exports = {
     const serviceId = elApp.getConfig('persistence.backend');
     const serviceName = elApp.utils.camelCase(`persistence_${serviceId}_service`);
     const S = elApp[serviceName];
+    S.searchBackend = S.search;
     Object.assign(S, {
       Query(realm, query) {
         return Query(realm, this)(query);
@@ -25,6 +26,9 @@ module.exports = {
       },
       matchOne(realm, body) {
         return this.matchQuery(realm, body).first();
+      },
+      search(realm, body) {
+        return this.Query(realm, body).all();
       },
     });
     return elApp[serviceName];

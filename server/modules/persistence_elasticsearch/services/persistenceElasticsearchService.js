@@ -73,13 +73,12 @@ const service = function service(elApp) {
   };
 
   persistence.search = function search(realm, query) {
-    const options = query.query.options;
-    delete (query.query, 'options');
-    elApp.logService.debug('persistence', JSON.stringify(query.query));
-    const esQuery = queryHelper.encodeQuery(query.query);
+    const options = query.options;
+    elApp.logService.debug('persistence', `Elapp query: ${JSON.stringify(query)}`);
+    const esQuery = queryHelper.encodeFilter(query.filter);
     const body = { query: esQuery };
     Object.assign(body, options);
-    elApp.logService.debug('persistence', JSON.stringify(esQuery));
+    elApp.logService.debug('persistence', `Elapp ES Query: ${JSON.stringify(body)}`);
     return this.es.search({
       index: realm,
       body,

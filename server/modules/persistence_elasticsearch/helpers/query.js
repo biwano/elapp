@@ -1,12 +1,12 @@
 // Converts an elApp query into an elasticserach query
 module.exports = {
-  encodeQuery(query) {
+  encodeFilter(query) {
     const filter = [];
-    const params = query.params;
-    const op = query.op;
+    const params = query.$params;
+    const op = query.$op;
     if (op === 'and') {
-      params.forEach((innerQuery) => {
-        filter.push(this.encodeQuery(innerQuery.query));
+      params.forEach((elAppFilter) => {
+        filter.push(this.encodeFilter(elAppFilter));
       });
       return {
         bool: { filter },

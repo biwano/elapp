@@ -12,6 +12,7 @@ import { LocalesMixin, locales } from './mixins/localesMixin';
 import AuthMixin from './mixins/authMixin';
 import MessagesMixin from './mixins/messagesMixin';
 import NavMixin from './mixins/navMixin';
+import DocumentMixin from './mixins/documentMixin';
 
 import MessagesStore from './store/messagesStore';
 import AuthStore from './store/authStore';
@@ -34,6 +35,7 @@ export default {
     NavMixin,
     MessagesMixin,
     AuthMixin,
+    DocumentMixin,
   },
   Stores: {
     MessagesStore,

@@ -1,19 +1,17 @@
 <template>
- <table class="uk-table">
-    <caption></caption>
+ <table class="uk-table uk-table-divider">
     <thead>
         <tr>
-            <th></th>
+            <th>Schema</th>
+            <th>key</th>
+            <th>fields</th>
         </tr>
     </thead>
-    <tfoot>
-        <tr>
-            <td></td>
-        </tr>
-    </tfoot>
     <tbody>
-        <tr v-bind:key="doc.id" v-for="doc in documents">
-            <td>{{ doc }} </td>
+        <tr v-bind:key="doc.$uuid" v-for="doc in documents">
+            <td>{{ doc.identifier }} </td>
+            <td>{{ doc.key }} </td>
+            <td>{{ doc.fields }} </td>
         </tr>
     </tbody>
 </table>
@@ -24,20 +22,21 @@
 // import AuthMixin from '../mixins/authMixin';
 // import FormMixin from '../mixins/formMixin';
 // import MessagesMixin from '../mixins/messagesMixin';
-import DocumentsMixin from '../mixins/documentsMixin';
+import DocumentMixin from '../mixins/documentMixin';
 
 export default {
   name: 'DocumentsTable',
-  mixins: [DocumentsMixin],
+  mixins: [DocumentMixin],
+  props: ['filter'],
   data() {
     return {
       columns: [],
       documents: [],
-      query: {},
     };
   },
   created() {
-    this.search(this.query).then((documents) => { this.documents = documents; });
+    const promise = this.search(this.filter);
+    promise.then((documents) => { this.documents = documents; });
   },
   methods: {
   },

@@ -16,31 +16,40 @@ const service = function service(elApp) {
       getSchema(doc) {
         return this.getSchemaService(doc).schema;
       },
-      async create(schemaId, body_) {
+      async createBackend(schemaId, body_) {
         let body = Object.assign({}, body_);
         body.$schema = schemaId;
-
-        if (!await this.keyUsed(schemaId, body)) {
-          // Adds the schema to the body
-          // Creates an uuid
-          body.$uuid = uuidv1();
-          // Ensure acls
-          if (body.$localAcls === 'undefined') { body.$localAcls = []; }
-          //
-          elApp.invokeHooks('document_before_create', body);
-          // Checks the document consistency
-          this.check(body);
-          // Saves the document
-          elApp.logService.trace('documents', `Creating ${schemaId} document ${body.$uuid}`);
-          elApp.logService.debug('documents', body);
-          body = codecs.encode(body);
-          return elApp.persistence.create(realm, schemaId, body.$uuid, body).then((doc) => {
-            this.updateAcls(body.$uuid);
-            return doc;
-          });
+        // Adds the schema to the body
+        // Creates an uuid
+        body.$uuid = uuidv1();
+        // Ensure acls
+        if (body.$localAcls === 'undefined') { body.$localAcls = []; }
+        //
+        elApp.invokeHooks('document_before_create', body);
+        // Checks the document consistency
+        this.check(body);
+        // Saves the document
+        elApp.logService.trace('documents', `Creating ${schemaId} document ${body.$uuid}`);
+        elApp.logService.debug('documents', body);
+        body = codecs.encode(body);
+        return elApp.persistence.create(realm, schemaId, body.$uuid, body).then((doc) => {
+          this.updateAcls(body.$uuid);
+          return doc;
+        });
+      },
+      async create(schemaId, body_) {
+        this.createIfAbsent(schemaId, body_).then(async (response) => {
+          if (response === null) {
+            const key = JSON.stringify(await this.keyFromBody(schemaId, body_));
+            elApp.logService.error('documents', `Cannot create document with schema: ${schemaId}. Duplicate key ${key}}`);
+          }
+          return response;
+        });
+      },
+      async createIfAbsent(schemaId, body_) {
+        if (!await this.keyUsed(schemaId, body_)) {
+          return this.createBackend(schemaId, body_);
         }
-        elApp.logService.error('documents', `Cannot create document with schema: ${schemaId}. Duplicate key ${JSON.stringify(await this.keyFromBody(schemaId, body_))}`);
-
         return Promise.resolve(null);
       },
       async keyUsed(schemaId, key) {
@@ -76,16 +85,23 @@ const service = function service(elApp) {
       },
       async matchOne(body) {
         let doc = null;
-        let matchParams = Object.assign({}, body);
-        matchParams = codecs.encode(matchParams);
-        doc = await elApp.persistence.matchOne(realm, matchParams);
+        let params = Object.assign({}, body);
+        params = codecs.encode(params);
+        doc = await elApp.persistence.matchOne(realm, params);
         return codecs.decode(doc);
       },
       async match(body) {
         let docs = [];
-        let matchParams = Object.assign({}, body);
-        matchParams = codecs.encode(matchParams);
-        docs = await elApp.persistence.match(realm, matchParams);
+        let params = Object.assign({}, body);
+        params = codecs.encode(params);
+        docs = await elApp.persistence.match(realm, params);
+        return docs.map(doc => codecs.decode(doc));
+      },
+      async search(query) {
+        let docs = [];
+        let params = Object.assign({}, query);
+        params = codecs.encode(query);
+        docs = await elApp.persistence.search(realm, params);
         return docs.map(doc => codecs.decode(doc));
       },
     };

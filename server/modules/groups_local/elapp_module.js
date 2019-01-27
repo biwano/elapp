@@ -18,7 +18,7 @@ module.exports = {
 
     // Create admin gorup if it does not exist
     elApp.logService.debug('authentication', 'Ensuring admin group');
-    return elApp.DocumentService(['group:admin']).create('group', {
+    return elApp.DocumentService(['group:admin']).createIfAbsent('group', {
       identifier: 'admin',
       description: 'Administrators',
       users: ['admin'],
