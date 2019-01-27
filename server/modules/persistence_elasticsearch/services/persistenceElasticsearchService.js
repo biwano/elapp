@@ -13,30 +13,28 @@ const service = function service(elApp) {
 
 
   persistence.connect = function connect() {
-    const es = new elasticsearch.Client({
+    this.es = new elasticsearch.Client({
       host: this.host,
       log: elApp.logService.getLogLevelName('persistence_backend'),
     });
-    this.es = es;
-    return new Promise(async (resolve) => {
-      const index = `${this.docIndex}`;
-
-      // Delete indice
-      if (this.drop) {
-        await es.indices.delete({
-          index,
-          ignoreUnavailable: true,
-        });
-      }
-      // Ensure indice
-      await es.indices.create({
-        index,
-        ignore: [400],
-      });
+    return this.es;
+  };
+  persistence.deleteRealm = function deleteRealm(realm) {
+    return this.es.indices.delete({
+      realm,
+      ignoreUnavailable: true,
+    });
+  };
+  persistence.createRealm = function createRealm(realm) {
+    // Ensure indice
+    this.es.indices.create({
+      index: realm,
+      ignore: [400],
+    }).then(() =>
       // Create mapping for system fields
-      await this.es.indices.putMapping({
+      this.es.indices.putMapping({
         type: this.docType,
-        index,
+        index: realm,
         body: {
           properties: {
             $uuid: { type: 'keyword' },
@@ -45,13 +43,10 @@ const service = function service(elApp) {
             $localAcls: { type: 'object' },
           },
         },
-      });
-      resolve(true);
-    });
-    // return this.es;
+      }));
   };
 
-  persistence.registerSchema = async function registerSchema(params) {
+  persistence.registerSchema = async function registerSchema(realm, params) {
     const identifier = params.identifier;
     const fields = params.fields;
     const index = `${this.docIndex}`;
@@ -80,7 +75,7 @@ const service = function service(elApp) {
     });
   };
 
-  persistence.search = function search(query) {
+  persistence.search = function search(realm, query) {
     const options = query.query.options;
     delete (query.query, 'options');
     elApp.logService.debug('persistence', JSON.stringify(query.query));
@@ -89,34 +84,31 @@ const service = function service(elApp) {
     Object.assign(body, options);
     elApp.logService.debug('persistence', JSON.stringify(esQuery));
     return this.es.search({
-      index: this.docIndex,
+      index: realm,
       body,
     }).then(result => result.hits.hits.map(hit => hit._source));
   };
 
-  persistence.get = function get(uuid) {
-    const index = this.docIndex;
+  persistence.get = function get(realm, uuid) {
     return this.es.get({
-      index,
+      index: realm,
       type: this.docType,
       id: uuid,
     }).then(hit => hit._source);
   };
-  persistence.create = function createDocument(schemaId, uuid, doc) {
-    const index = `${this.docIndex}`;
+  persistence.create = function createDocument(realm, schemaId, uuid, doc) {
     return this.es.create({
-      index,
+      index: realm,
       type: this.docType,
       id: uuid,
       body: doc,
     });
   };
-  persistence.update = async function updateDocument(schemaId, uuid, bodyParts) {
+  persistence.update = async function updateDocument(realm, schemaId, uuid, bodyParts) {
     const doc = await this.get(uuid);
     Object.assign(doc, bodyParts);
-    const index = `${this.docIndex}`;
     return this.es.index({
-      index,
+      index: realm,
       type: this.docType,
       id: uuid,
       body: doc,

@@ -1,3 +1,4 @@
+// Converts an elApp query into an elasticserach query
 module.exports = {
   encodeQuery(query) {
     const filter = [];

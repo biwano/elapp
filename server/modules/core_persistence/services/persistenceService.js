@@ -9,22 +9,22 @@ module.exports = {
     const serviceName = elApp.utils.camelCase(`persistence_${serviceId}_service`);
     const S = elApp[serviceName];
     Object.assign(S, {
-      Query(query) {
-        return Query(this)(query);
+      Query(realm, query) {
+        return Query(realm, this)(query);
       },
-      matchQuery(body) {
-        const query = this.Query();
+      matchQuery(realm, body) {
+        const query = this.Query(realm);
         Object.keys(body).forEach((key) => {
           query.and(equals(key, body[key]));
         },
         );
         return query;
       },
-      match(body) {
-        return this.matchQuery(body).all();
+      match(realm, body) {
+        return this.matchQuery(realm, body).all();
       },
-      matchOne(body) {
-        return this.matchQuery(body).first();
+      matchOne(realm, body) {
+        return this.matchQuery(realm, body).first();
       },
     });
     return elApp[serviceName];

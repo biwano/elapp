@@ -3,8 +3,9 @@ const NodeCache = require('node-cache');
 const codecs = require('../helpers/codecs');
 
 const service = function service(elApp) {
-  const defaultAcls = elApp.getConfig('document.defaultAcls', [{ 'group:admin': 'write' }]);
-  return function makeService(acls) {
+  return function makeService(acls, realm) {
+    if (typeof realm === 'undefined') realm = elApp.realmService.defaultRealm;
+    const defaultAcls = elApp.realmService.defaultAcls;
     if (!Array.isArray(acls)) acls = [acls];
     return {
     // Creates a document if the key is not used
@@ -32,7 +33,7 @@ const service = function service(elApp) {
           // Saves the document
           elApp.logService.trace('documents', `Creating document with schema: ${schemaId} ${body.$uuid}`);
           body = codecs.encode(body);
-          return elApp.persistence.create(schemaId, body.$uuid, body).then((doc) => {
+          return elApp.persistence.create(realm, schemaId, body.$uuid, body).then((doc) => {
             this.updateAcls(body.$uuid);
             return doc;
           });
@@ -46,10 +47,10 @@ const service = function service(elApp) {
         return doc !== null;
       },
       async updateAcls(uuid) {
-        const doc = await elApp.persistence.get(uuid);
+        const doc = await elApp.persistence.get(realm, uuid);
         // TODO: inherit parent acls
         const $acls = (doc.$localAcls || []).concat(defaultAcls);
-        elApp.persistence.update(doc.$schema, uuid, { $acls });
+        elApp.persistence.update(realm, doc.$schema, uuid, { $acls });
       },
       async check(body) {
         const schema = await elApp.SchemaService(acls, body.$schema).schema;
@@ -76,14 +77,14 @@ const service = function service(elApp) {
         let doc = null;
         let matchParams = Object.assign({}, body);
         matchParams = codecs.encode(matchParams);
-        doc = await elApp.persistence.matchOne(matchParams);
+        doc = await elApp.persistence.matchOne(realm, matchParams);
         return codecs.decode(doc);
       },
       async match(body) {
         let docs = [];
         let matchParams = Object.assign({}, body);
         matchParams = codecs.encode(matchParams);
-        docs = await elApp.persistence.match(matchParams);
+        docs = await elApp.persistence.match(realm, matchParams);
         return docs.map(doc => codecs.decode(doc));
       },
     };

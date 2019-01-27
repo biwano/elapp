@@ -13,10 +13,10 @@ const service = async function service(elApp) {
         const secret = config.secret;
         const storeName = config.store || 'memory';
         const storeServiceName = `cookieAuthentication${capitalizeFirstLetter(storeName)}StoreService`;
-        const storeService = elApp[storeServiceName];
+        const storeService = elApp.getService(storeServiceName);
         if (typeof storeService !== 'undefined') {
-          elApp.logService.debug('authentication', `Creating cookie based session using store '${storeServiceName}'`);
-          elApp.logService.trace('authentication', `Options ${JSON.stringify(config.storeOptions)}'`);
+          elApp.logService.debug('authentication', `CookieAuthentication: Creating cookie based session using store '${storeServiceName}'`);
+          elApp.logService.trace('authentication', `CookieAuthentication: Options ${JSON.stringify(config.storeOptions)}'`);
           const store = await storeService.getStore(config.storeOptions);
           this.session = sessionMaker({
             secret,
@@ -26,7 +26,7 @@ const service = async function service(elApp) {
             store,
           //
           });
-        } else elApp.logService.error('authorization', `Cannot find service ${storeServiceName}`);
+        }
       }
       return this.session;
     },
@@ -46,14 +46,14 @@ const service = async function service(elApp) {
     // Setting up credentials in the cookie
     postAuth(req) {
       if (typeof req.user !== 'undefined' && req.user.login !== req.session.login) {
-        elApp.logService.trace('authentication', `Saving credentials '${req.user.login}' in sesson`);
+        elApp.logService.trace('authentication', `CookieAuthentication: Saving credentials '${req.user.login}' in sesson`);
         req.session.login = req.user.login;
       }
       return Promise.resolve();
     },
     // Sign Out
     signOut(req) {
-      elApp.logService.trace('authentication', `Destroying session '${req.session.user}'`);
+      elApp.logService.trace('authentication', `CookieAuthentication: Destroying session '${req.session.user}'`);
       req.session.destroy();
       return Promise.resolve();
     },

@@ -3,13 +3,16 @@ module.exports = {
     backend: 'elasticsearch',
     host: 'localhost:9200',
     log: 'debug',
-    drop: false,
+  },
+  documents: {
+    dropDefaltRealm: 'true',
+    defaultRealm: 'elapp',
   },
   groups: {
     chain: [{ method: 'local' }],
   },
   log: { level: 'info',
-    persistence: { level: 'debug' },
+    persistence: { level: 'trace' },
     moduleloader: { level: 'trace' },
     authentication: { level: 'trace' },
     authorization: { level: 'trace' },

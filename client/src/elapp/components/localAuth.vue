@@ -58,7 +58,7 @@ export default {
         this.messagePromiseCatcher(
           this.authSignOut().then(() => {
             this.authSignIn(this.login, this.password).then((user) => {
-              if (user.authService === 'authLocalService') {
+              if (user.authService === 'localAuthenticationService') {
                 this.$emit('authenticated', user);
               } else {
                 this.displayError('invalid_credentials');

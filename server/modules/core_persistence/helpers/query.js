@@ -6,7 +6,7 @@ const operators = {
     return NoopQuery({ op: '=', params: [p1, p2] });
   },
 };
-const Query = function Query(originalExecutor) {
+const Query = function Query(realm, originalExecutor) {
   return function makeQuery(originalQuery) {
     const res = {
       query: originalQuery,
@@ -36,17 +36,20 @@ const Query = function Query(originalExecutor) {
       },
       first() {
         this.size(1);
-        return this.executor.search(this).then(docs => (docs.length > 0 ? docs[0] : null));
+        return this.executor.search(realm, this).then(docs => (docs.length > 0 ? docs[0] : null));
       },
       all() {
-        return this.executor.search(this);
+        return this.executor.search(realm, this);
       },
 
     };
+    // Add operators function
     Object.keys(operators).forEach((key) => { res[key] = operators[key]; });
     return res;
   };
 };
-NoopQuery = Query();
+NoopQuery = function NoopQuery(query) {
+  return { query };
+};
 
 module.exports = { Query, equals: operators.equals };
