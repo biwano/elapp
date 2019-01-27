@@ -18,7 +18,7 @@ module.exports = {
     // Registering hook to encrypt password
     elApp.registerHook('document_before_create', (doc) => {
       if (doc.$schema === 'user') {
-        doc.password = elApp.authLocalService.encrypt(doc.password);
+        doc.password = elApp.localAuthenticationService.encrypt(doc.password);
       }
     }, this);
     //     const result = await bcrypt.compare(password, user.auth.password);

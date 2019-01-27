@@ -18,10 +18,10 @@ router.use('/', async (req, res, next) => {
   await req.elApp.authenticationService.forAllChainedServices((chainElement, authServiceName, authService) =>
     new Promise(async (resolve) => {
       req.elApp.logService.debug('authentication', `Trying ${authServiceName}`);
-      const login = await authService.authenticate(req, chainElement, res);
-      if (login !== undefined) {
-        req.elApp.logService.trace('authentication', `Authentication successful '${login}'`);
-        req.user = { login, authService: authServiceName };
+      const user = await authService.authenticate(req, chainElement, res);
+      if (user !== undefined) {
+        req.elApp.logService.trace('authentication', `Authentication successful '${user.realm} ${user.login}'`);
+        req.user = Object.assign({}, user, { authService: authServiceName });
         resolve(true);
       } else resolve();
     }));

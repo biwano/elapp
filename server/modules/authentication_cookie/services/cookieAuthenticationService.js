@@ -39,15 +39,16 @@ const service = async function service(elApp) {
     },
     // Authenticating against the session
     authenticate(req) {
-      let login;
-      if (typeof req.session.login !== 'undefined') login = req.session.login;
-      return Promise.resolve(login);
+      // let login;
+      // if (typeof req.session.user !== 'undefined')
+      return Promise.resolve(req.session.user);
     },
     // Setting up credentials in the cookie
     postAuth(req) {
-      if (typeof req.user !== 'undefined' && req.user.login !== req.session.login) {
+      if (typeof req.user !== 'undefined' &&
+        (typeof req.session.user === 'undefined' || req.user.login !== req.session.user.login)) {
         elApp.logService.trace('authentication', `CookieAuthentication: Saving credentials '${req.user.login}' in sesson`);
-        req.session.login = req.user.login;
+        req.session.user = req.user;
       }
       return Promise.resolve();
     },

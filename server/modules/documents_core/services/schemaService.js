@@ -37,12 +37,12 @@ const service = function service(elApp) {
             $localAcls: schemaAcls,
           };
           cache.set(`schema_${realm}_${identifier}`, schema);
-          elApp.logService.trace('documents', `Caching schema '${realm}_${identifier}'`);
+          elApp.logService.debug('documents', `Caching schema '${realm}_${identifier}'`);
 
           // Save the definition of the schema in the schema collection if it does not exist
           return documentService.create('schema', schema);
         } catch (e) {
-          const error = `Error registering schema '${realm} ${identifier}'`;
+          const error = `Error registering schema '${realm} ${identifier}' ${e}`;
           elApp.logService.error('documents', error);
           return Promise.resolve(error);
         }

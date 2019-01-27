@@ -31,7 +31,8 @@ const service = function service(elApp) {
           // Checks the document consistency
           this.check(body);
           // Saves the document
-          elApp.logService.trace('documents', `Creating document with schema: ${schemaId} ${body.$uuid}`);
+          elApp.logService.trace('documents', `Creating ${schemaId} document ${body.$uuid}`);
+          elApp.logService.debug('documents', body);
           body = codecs.encode(body);
           return elApp.persistence.create(realm, schemaId, body.$uuid, body).then((doc) => {
             this.updateAcls(body.$uuid);

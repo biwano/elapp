@@ -36,7 +36,7 @@ const service = function service(elApp) {
           elApp.getConfig('log.destinations',
             ['logService']));
         logDestinations.forEach((destination) => {
-          elApp[destination].write(`[ ${category} ] ${levelName}: ${date.toLocaleString()}: ${data}`);
+          elApp[destination].write(`${date.toLocaleString()} ${category} ${levelName}: ${data}`);
         });
       }
     },

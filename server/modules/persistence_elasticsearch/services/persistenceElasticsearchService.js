@@ -5,11 +5,9 @@ const service = function service(elApp) {
   const persistence = {};
 
   persistence.elApp = elApp;
-  persistence.docIndex = elApp.getConfig('persistence.index', 'elapp');
   persistence.docType = elApp.getConfig('persistence.type', 'elapp');
   persistence.host = elApp.getConfig('persistence.host');
   persistence.log = elApp.getConfig('persistence.log');
-  persistence.drop = elApp.getConfig('persistence.drop', false);
 
 
   persistence.connect = function connect() {
@@ -21,13 +19,13 @@ const service = function service(elApp) {
   };
   persistence.deleteRealm = function deleteRealm(realm) {
     return this.es.indices.delete({
-      realm,
+      index: realm,
       ignoreUnavailable: true,
     });
   };
   persistence.createRealm = function createRealm(realm) {
     // Ensure indice
-    this.es.indices.create({
+    return this.es.indices.create({
       index: realm,
       ignore: [400],
     }).then(() =>
@@ -49,7 +47,6 @@ const service = function service(elApp) {
   persistence.registerSchema = async function registerSchema(realm, params) {
     const identifier = params.identifier;
     const fields = params.fields;
-    const index = `${this.docIndex}`;
     const properties = {};
     // create mapping properties
     Object.keys(fields).forEach((fieldName) => {
@@ -68,7 +65,7 @@ const service = function service(elApp) {
     // Create the mapping
     return this.es.indices.putMapping({
       type: this.docType,
-      index,
+      index: realm,
       body: {
         properties,
       },
@@ -105,7 +102,7 @@ const service = function service(elApp) {
     });
   };
   persistence.update = async function updateDocument(realm, schemaId, uuid, bodyParts) {
-    const doc = await this.get(uuid);
+    const doc = await this.get(realm, uuid);
     Object.assign(doc, bodyParts);
     return this.es.index({
       index: realm,

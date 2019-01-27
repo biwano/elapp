@@ -75,7 +75,7 @@ const loadModule = async function loadModule(elApp, modules, moduleName) {
         await module_.init(elApp);
       }
       module_.status = 'loaded';
-      trace(elApp, `Loaded: ${moduleName}`);
+      debug(elApp, `Loaded: ${moduleName}`);
       resolve();
     } else if (module_.status === 'loaded') {
       debug(elApp, `already loaded: ${moduleName}`);

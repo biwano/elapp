@@ -5,8 +5,8 @@ module.exports = {
     log: 'debug',
   },
   documents: {
-    dropDefaltRealm: 'true',
-    defaultRealm: 'elapp',
+    dropDefaultRealm: 'false',
+    defaultRealm: 'dev',
   },
   groups: {
     chain: [{ method: 'local' }],

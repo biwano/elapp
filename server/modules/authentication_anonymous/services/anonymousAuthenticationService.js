@@ -1,7 +1,8 @@
 const service = function service(elApp) {
   return {
     authenticate(req, config) {
-      return Promise.resolve(config.login || 'anonymous');
+      return Promise.resolve({ login: config.login || 'anonymous',
+        realm: config.realm || 'elapp' });
     },
     // Setting up anonymous state
     postAuth(req, config) {

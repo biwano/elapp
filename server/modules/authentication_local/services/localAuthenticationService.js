@@ -12,6 +12,7 @@ const service = function service(elApp) {
     },
     async authenticate(req) {
       let user = null;
+      const realm = req.headers['elapp-realm'];
       const apikey = req.headers['elapp-api-key'];
       const login = req.headers['elapp-login'];
       const password = req.headers['elapp-password'];
@@ -26,7 +27,7 @@ const service = function service(elApp) {
           user = tmpUser;
         }
       }
-      if (user !== null) return user.login;
+      if (user !== null) return { realm, login: user.login };
       return undefined;
     },
   };
