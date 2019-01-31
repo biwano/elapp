@@ -1,5 +1,5 @@
 module.exports = {
-  name: 'ui_components_files',
+  name: 'ui_components_file',
   dependencies: ['ui_components_core'],
   documentation: {
     description: 'Subservice of Chained service that enables clients to fetch UI information',

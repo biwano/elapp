@@ -1,4 +1,13 @@
 module.exports = {
+  log: { level: 'info',
+    persistence: { level: 'trace' },
+    moduleloader: { level: 'trace' },
+    authentication: { level: 'info' },
+    authorization: { level: 'trace' },
+    groups: { level: 'trace' },
+    documents: { level: 'trace' },
+    uiComponents: { level: 'trace' },
+  },
   persistence: {
     backend: 'elasticsearch',
     host: 'localhost:9200',
@@ -10,14 +19,6 @@ module.exports = {
   },
   groups: {
     chain: [{ method: 'local' }],
-  },
-  log: { level: 'info',
-    persistence: { level: 'debug' },
-    moduleloader: { level: 'debug' },
-    authentication: { level: 'info' },
-    authorization: { level: 'trace' },
-    groups: { level: 'info' },
-    documents: { level: 'trace' },
   },
   authentication: {
     chain: [
@@ -35,9 +36,9 @@ module.exports = {
     ],
     local: { encryptionkey: 'the key' },
   },
-  authorization: {
+  uiComponents: {
     chain: [
-      { method: 'local' },
+      { method: 'file' },
     ],
   },
 };

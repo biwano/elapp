@@ -36,7 +36,7 @@ const service = function service(elApp) {
             fields,
             $localAcls: schemaAcls,
           };
-          cache.set(`schema_${realm}_${identifier}`, schema);
+          await cache.set(`schema_${realm}_${identifier}`, schema);
           elApp.logService.debug('documents', `Caching schema '${realm}_${identifier}'`);
 
           // Save the definition of the schema in the schema collection if it does not exist
