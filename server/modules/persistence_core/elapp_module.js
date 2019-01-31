@@ -6,13 +6,42 @@
  * get()
 */
 module.exports = {
-  name: 'core_persistence',
+  name: 'persistence_core',
   dependencies(elApp) {
-    return ['core_logging', `persistence_${elApp.getConfig('persistence.backend')}`];
+    return ['logging_core', `persistence_${elApp.getConfig('persistence.backend')}`];
   },
   init(elApp) {
     elApp.logService.trace('persistence', 'Connecting');
     return elApp.persistence.connect();
+  },
+  documentation: {
+    description: 'Chained module that enables persistence of the documents',
+    subservice_methods: [{ signature: 'connect()',
+      description: 'Connect to the database',
+    },
+    { signature: 'deleteRealm(realm)',
+      description: 'Deletes the realm \'realm\'',
+    },
+    { signature: 'createRealm(realm)',
+      description: 'Creates the realm \'realm\'',
+    },
+    { signature: 'registerSchema(realm, params)',
+      description: 'Registers a schema in the realm \'realm\'',
+    },
+    { signature: 'search(realm, query)',
+      description: 'Executes the given query on the given realm',
+    },
+    { signature: 'get(realm, uuid)',
+      description: 'get the document with the given uuid in the given realm',
+    },
+    { signature: 'createDocument(realm, schemaId, uuid, doc)',
+      description: 'Creates the document doc with the given uuid with the given schema in the given realm',
+    },
+    { signature: 'updateDocument(realm, schemaId, uuid, bodyParts)',
+      description: 'Updates the document with the given uuid with the given schema in the given realm using the given bodyparts',
+    },
+
+    ],
   },
 
 };

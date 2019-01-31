@@ -27,15 +27,24 @@ const error = function error(elApp, data) {
     console.log(data);
   }
 };
+const loadFiles = async function loadFiles(module_, path, callback) {
+  const filesPath = join(module_.path, path);
+  if (existsSync(filesPath)) {
+    const files = listFiles(filesPath);
+    for (let i = 0; i < files.length; i += 1) {
+      await callback(require(files[i]));
+    }
+  }
+};
 
 const loadModule = async function loadModule(elApp, modules, moduleName) {
   return new Promise((async (resolve, reject) => {
     const module_ = modules[moduleName];
-    let error;
+    let moduleError;
     if (typeof module_ === 'undefined') {
-      error = `Error: module not found: ${moduleName}`;
+      moduleError = `Error: module not found: ${moduleName}`;
     } else if (module_.status === 'loading') {
-      error = `Error: module cycle detected: ${moduleName}`;
+      moduleError = `Error: module cycle detected: ${moduleName}`;
     } else if (module_.status === 'viewed') {
       // Setting loading status
       module_.status = 'loading';
@@ -57,19 +66,12 @@ const loadModule = async function loadModule(elApp, modules, moduleName) {
       }
       // Loading module
       trace(elApp, `Loading: ${moduleName}`);
-      const loadFiles = async function loadFiles(path, callback) {
-        const filesPath = join(module_.path, path);
-        if (existsSync(filesPath)) {
-          const files = listFiles(filesPath);
-          for (let i=0;i<files.length;i+=1) {
-            await callback(require(files[i]));
-          };
-        }
-      };
-        // Loading routers
-      await loadFiles('routers', elAppRouter => elApp.registerRouter(elAppRouter));
+      // Loading routers
+      await loadFiles(module_, 'routers', elAppRouter => elApp.registerRouter(elAppRouter));
       // Loading services
-      await loadFiles('services', elAppService => elApp.registerService(elAppService));
+      await loadFiles(module_, 'services', elAppService => elApp.registerService(elAppService));
+      // Trigering hooks
+      elApp.invokeHooks('module_loading', module_)
       // Initializing module
       if (typeof module_.init !== "undefined") {
         await module_.init(elApp);
@@ -81,16 +83,14 @@ const loadModule = async function loadModule(elApp, modules, moduleName) {
       debug(elApp, `already loaded: ${moduleName}`);
       resolve();
     } else {
-      error = `[ Module Loader ] Error: module status error: ${moduleName}`;
+      moduleError = `[ Module Loader ] Error: module status error: ${moduleName}`;
     }
-    if (typeof error !== 'undefined') reject(error);
+    if (typeof moduleError !== 'undefined') reject(moduleError);
   }));
 };
 
-const load = async function load(elApp) {
+const loadModules = async function load(modulesDir) {
   return new Promise((async (resolve, reject) => {
-    const modulesDir = join(__dirname, 'modules');
-
     // Requiring modules
     const modules = {};
     listDirectories(modulesDir).forEach((dir) => {
@@ -101,26 +101,26 @@ const load = async function load(elApp) {
         Object.assign(module_, {
           status: 'viewed',
           path: dir,
-          elApp,
+          elApp: this,
         });
         if (typeof modules[module_.name] === "undefined") {
           modules[module_.name] = module_;
         }
-        else error(elApp, `Duplicate module name: ${module_.name}`)
+        else error(this, `Duplicate module name: ${module_.name}`)
       }
       catch(e) {
-        debug(elApp, `Ignoring folder: ${dir}`);
+        debug(this, `Ignoring folder: ${dir}`);
       }
     });
     /* eslint-disable */
     for (const moduleName of Object.keys(modules)) {
-      debug(elApp, `Loading module starts: ${moduleName}`);
-      await loadModule(elApp, modules, moduleName);
-      debug(elApp, `Loading module ends: ${moduleName}`);
+      debug(this, `Loading module starts: ${moduleName}`);
+      await loadModule(this, modules, moduleName);
+      debug(this, `Loading module ends: ${moduleName}`);
     }
     resolve();
   }));
   
 };
 
-module.exports = load;
+module.exports = { loadFiles, loadModule, loadModules };

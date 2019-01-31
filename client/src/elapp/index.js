@@ -7,15 +7,19 @@ import Tabs from './components/tabs';
 
 import LocalAuth from './components/localAuth';
 import DocumentsTable from './components/documentsTable';
+import Component from './components/component';
 
 import { LocalesMixin, locales } from './mixins/localesMixin';
 import AuthMixin from './mixins/authMixin';
 import MessagesMixin from './mixins/messagesMixin';
 import NavMixin from './mixins/navMixin';
 import DocumentMixin from './mixins/documentMixin';
+import ComponentMixin from './mixins/componentMixin';
 
 import MessagesStore from './store/messagesStore';
 import AuthStore from './store/authStore';
+
+import Routes from './routes';
 
 import http from './services/http';
 
@@ -30,17 +34,20 @@ export default {
 
     LocalAuth,
     DocumentsTable,
+    Component,
   },
   Mixins: {
     NavMixin,
     MessagesMixin,
     AuthMixin,
     DocumentMixin,
+    ComponentMixin,
   },
   Stores: {
     MessagesStore,
     AuthStore,
   },
+  Routes,
   install(Vue, options) {
     http.init(options);
     // 3. injecter des options de composant

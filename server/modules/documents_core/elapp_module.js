@@ -1,8 +1,6 @@
-
-
 module.exports = {
-  name: 'core_documents',
-  dependencies: ['core_persistence', 'core_logging'],
+  name: 'documents_core',
+  dependencies: ['persistence_core', 'logging_core'],
   async  init(elApp) {
   // Definition of the schema collection
     const schemaSchemaDefinition = {

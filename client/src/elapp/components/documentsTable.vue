@@ -27,10 +27,9 @@ import DocumentMixin from '../mixins/documentMixin';
 export default {
   name: 'DocumentsTable',
   mixins: [DocumentMixin],
-  props: ['filter'],
+  props: ['filter', 'columns'],
   data() {
     return {
-      columns: [],
       documents: [],
     };
   },

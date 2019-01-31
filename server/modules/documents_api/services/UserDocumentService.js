@@ -5,7 +5,6 @@ const getUserAcls = function getUserAcls(user) {
 };
 const service = function service(elApp) {
   return function UserDocumentService(user) {
-  	console.log(user);
     return elApp.DocumentService(getUserAcls(user), user.realm);
   };
 };

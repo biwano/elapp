@@ -9,7 +9,7 @@ import moment from 'moment';
 import Elapp from 'elapp';
 import createStore from '@/store/store';
 import App from './App';
-import router from './router/routes';
+import router from './routes';
 import config from './config';
 import en from './locales/en';
 
@@ -25,7 +25,6 @@ Elapp.loadLocale('en', en);
 Vue.filter('formatDate', value => (value ? moment(String(value)).format('DD MMM YYYY hh:mm') : undefined));
 // Injecting mixins
 Vue.mixin(Elapp.Mixins.NavMixin);
-Vue.mixin(Elapp.Mixins.MessagesMixin);
 
 // Importing components globally
 Vue.component('suggestion', Elapp.Components.Suggestion);

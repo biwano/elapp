@@ -12,7 +12,7 @@ import Nav from '@/components/nav';
 
 export default {
   name: 'App',
-  mixins: [Elapp.Mixins.AuthMixin],
+  mixins: [Elapp.Mixins.AuthMixin, Elapp.Mixins.MessagesMixin],
   components: { navigation: Nav, messages: Elapp.Components.Messages },
   created() {
     this.messagePromiseCatcher(this.authGetUserInfo());

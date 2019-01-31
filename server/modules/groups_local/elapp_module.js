@@ -1,6 +1,6 @@
 module.exports = {
-  name: 'local_groups',
-  dependencies: 'core_documents',
+  name: 'groups_local',
+  dependencies: 'documents_core',
   async init(elApp) {
     // Definition of the groups collection
     const groupSchemaDefinition = {

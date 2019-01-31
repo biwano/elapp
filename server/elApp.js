@@ -1,5 +1,7 @@
 const configuration = require('./config.js');
 const ChainedService = require('./elAppChainedService.js');
+const moduleLoader = require('./elAppModuleLoader.js');
+const { join } = require('path');
 
 const elAppMaker = function elAppMaker(app) {
   const elApp = {};
@@ -7,6 +9,12 @@ const elAppMaker = function elAppMaker(app) {
   elApp.services = {};
   elApp.config = configuration;
   elApp.hooks = {};
+  // Put elApp in request context
+  app.use('/', (req, res, next) => {
+    req.elApp = elApp;
+    next();
+  });
+
 
   elApp.utils = {
     camelCase(name) {
@@ -62,7 +70,9 @@ const elAppMaker = function elAppMaker(app) {
   };
   elApp.chainedService = ChainedService(elApp);
 
-  return elApp;
+  Object.assign(elApp, moduleLoader);
+  const modulesDir = join(__dirname, 'modules');
+  return elApp.loadModules(modulesDir).then(() => elApp);
 };
 
 module.exports = elAppMaker;

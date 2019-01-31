@@ -1,7 +1,7 @@
 
 module.exports = {
   name: 'authentication_local',
-  dependencies: ['core_authentication', 'core_documents', 'core_logging'],
+  dependencies: ['authentication_core', 'documents_core', 'logging_core'],
   async init(elApp) {
     // Definition of the user schema
     const userSchemaDefinition = {

@@ -1,17 +1,18 @@
 <template>
-      <documents-table :filter="filter"></documents-table>
+      <documents-table :filter="filter" :columns="columns"></documents-table>
 </template>
 
 <script>
 import Elapp from 'elapp';
 
 export default {
-  name: 'Home',
+  name: 'Schema',
   mixins: [Elapp.Mixins.DocumentMixin],
   components: { 'documents-table': Elapp.Components.DocumentsTable },
   data() {
     return {
       filter: {},
+      columns: [],
     };
   },
   created() {
