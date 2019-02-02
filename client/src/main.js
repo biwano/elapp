@@ -24,7 +24,6 @@ Elapp.loadLocale('en', en);
 
 Vue.filter('formatDate', value => (value ? moment(String(value)).format('DD MMM YYYY hh:mm') : undefined));
 // Injecting mixins
-Vue.mixin(Elapp.Mixins.NavMixin);
 
 // Importing components globally
 Vue.component('suggestion', Elapp.Components.Suggestion);
@@ -39,3 +38,5 @@ new Vue({
   components: { App },
   template: '<App/>',
 });
+
+export default Elapp;

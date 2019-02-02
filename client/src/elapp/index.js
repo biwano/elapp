@@ -1,21 +1,7 @@
-import BooleanRadio from './components/booleanRadio';
-import Breadcrumbs from './components/breadcrumbs';
-import Icon from './components/icon';
-import Messages from './components/messages';
-import Suggestion from './components/suggestion';
-import Tabs from './components/tabs';
+import Components from './components';
 
-import LocalAuth from './components/localAuth';
-import DocumentsTable from './components/documentsTable';
-import Component from './components/component';
-
-import { LocalesMixin, locales } from './mixins/localesMixin';
-import AuthMixin from './mixins/authMixin';
-import MessagesMixin from './mixins/messagesMixin';
-import NavMixin from './mixins/navMixin';
-import DocumentMixin from './mixins/documentMixin';
-import ComponentMixin from './mixins/componentMixin';
-
+import { locales } from './mixins/localesMixin';
+import Mixins from './mixins';
 import MessagesStore from './store/messagesStore';
 import AuthStore from './store/authStore';
 
@@ -23,26 +9,9 @@ import Routes from './routes';
 
 import http from './services/http';
 
-export default {
-  Components: {
-    BooleanRadio,
-    Breadcrumbs,
-    Icon,
-    Messages,
-    Suggestion,
-    Tabs,
-
-    LocalAuth,
-    DocumentsTable,
-    Component,
-  },
-  Mixins: {
-    NavMixin,
-    MessagesMixin,
-    AuthMixin,
-    DocumentMixin,
-    ComponentMixin,
-  },
+const Elapp = {
+  Components,
+  Mixins,
   Stores: {
     MessagesStore,
     AuthStore,
@@ -51,9 +20,10 @@ export default {
   install(Vue, options) {
     http.init(options);
     // 3. injecter des options de composant
-    Vue.mixin(LocalesMixin);
+    Vue.mixin(Mixins.LocalesMixin);
   },
   loadLocale(languageName, dictionnary) {
     locales.$load(languageName, dictionnary);
   },
 };
+export default Elapp;

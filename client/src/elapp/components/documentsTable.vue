@@ -9,9 +9,11 @@
     </thead>
     <tbody>
         <tr v-bind:key="doc.$uuid" v-for="doc in documents">
+          <slot v-bind:doc="doc">
             <td>{{ doc.identifier }} </td>
             <td>{{ doc.key }} </td>
             <td>{{ doc.fields }} </td>
+          </slot>
         </tr>
     </tbody>
 </table>

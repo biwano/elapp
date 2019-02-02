@@ -32,7 +32,18 @@ const loadFiles = async function loadFiles(module_, path, callback) {
   if (existsSync(filesPath)) {
     const files = listFiles(filesPath);
     for (let i = 0; i < files.length; i += 1) {
-      await callback(require(files[i]));
+      const filePath = files[i];
+      await callback(require(filePath), filePath);
+    }
+  }
+};
+const forEachFile = async function forEachFile(module_, path, callback) {
+  const filesPath = join(module_.path, path);
+  if (existsSync(filesPath)) {
+    const files = listFiles(filesPath);
+    for (let i = 0; i < files.length; i += 1) {
+      const filePath = files[i];
+      await callback(filePath);
     }
   }
 };
@@ -123,4 +134,4 @@ const loadModules = async function load(modulesDir) {
   
 };
 
-module.exports = { loadFiles, loadModule, loadModules };
+module.exports = { forEachFile, listFiles, loadModule, loadModules };

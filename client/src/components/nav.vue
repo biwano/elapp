@@ -56,7 +56,7 @@ import Elapp from 'elapp';
 
 export default {
   name: 'Nav',
-  mixins: [Elapp.Mixins.AuthMixin],
+  mixins: [Elapp.Mixins.AuthMixin, Elapp.Mixins.NavMixin],
   data() {
     return {
     };

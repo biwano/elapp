@@ -2,6 +2,7 @@ const NodeCache = require('node-cache');
 
 const service = function service(elApp) {
   const cache = new NodeCache();
+  elApp.logService.debug('documents', 'Initializing cache');
   return function makeService(acls, schemaId, realm) {
     if (typeof realm === 'undefined') realm = elApp.realmService.defaultRealm;
     return {
@@ -36,11 +37,13 @@ const service = function service(elApp) {
             fields,
             $localAcls: schemaAcls,
           };
-          await cache.set(`schema_${realm}_${identifier}`, schema);
           elApp.logService.debug('documents', `Caching schema '${realm}_${identifier}'`);
-
-          // Save the definition of the schema in the schema collection if it does not exist
-          return documentService.createIfAbsent('schema', schema);
+          return new Promise((resolve) => {
+            cache.set(`schema_${realm}_${identifier}`, schema, () => {
+            // Save the definition of the schema in the schema collection if it does not exist
+              documentService.createIfAbsent('schema', schema).then(resolve);
+            });
+          });
         } catch (e) {
           const error = `Error registering schema '${realm} ${identifier}' ${e}`;
           elApp.logService.error('documents', error);

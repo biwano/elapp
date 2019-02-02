@@ -5,8 +5,8 @@ module.exports = {
     authentication: { level: 'info' },
     authorization: { level: 'trace' },
     groups: { level: 'trace' },
-    documents: { level: 'trace' },
-    uiComponents: { level: 'trace' },
+    documents: { level: 'debug' },
+    uiComponents: { level: 'debug' },
   },
   persistence: {
     backend: 'elasticsearch',
