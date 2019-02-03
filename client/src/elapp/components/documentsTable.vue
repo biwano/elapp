@@ -2,17 +2,15 @@
  <table class="uk-table uk-table-divider">
     <thead>
         <tr>
-            <th>Schema</th>
-            <th>key</th>
-            <th>fields</th>
+          <slot name="header">
+            {{L.uuid}}
+          </slot>
         </tr>
     </thead>
     <tbody>
         <tr v-bind:key="doc.$uuid" v-for="doc in documents">
           <slot v-bind:doc="doc">
-            <td>{{ doc.identifier }} </td>
-            <td>{{ doc.key }} </td>
-            <td>{{ doc.fields }} </td>
+            <td>{{ doc.uuid }} </td>
           </slot>
         </tr>
     </tbody>

@@ -1,3 +1,4 @@
+import http from '../services/http';
 
 // Locales object
 const locales = {
@@ -5,18 +6,30 @@ const locales = {
 //  $languages: [],
   yes: 'yes',
   no: 'no',
-  $load(languageName, dictionnary) {
-    Object.assign(this, dictionnary);
+  $load(language) {
+    return http.get(`/locale/${language}`).then((locale) => {
+      Object.assign(this, locale);
+      this.$callbacks.forEach((callback) => {
+        callback(this);
+      });
+    });
   },
+  $callbacks: [],
   $(key) {
     return this[key] === undefined ? key : this[key];
   },
 };
-locales.$load('en');
 
 const LocalesMixin = {
+  data() {
+    return {
+      L: locales,
+    };
+  },
   created() {
-    this.L = locales;
+    this.L.$callbacks.push((newLocales) => {
+      this.L = Object.assign({}, newLocales);
+    });
   },
 };
 export { LocalesMixin, locales };

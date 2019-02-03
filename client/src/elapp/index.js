@@ -19,11 +19,12 @@ const Elapp = {
   Routes,
   install(Vue, options) {
     http.init(options);
+    locales.$load('en');
     // 3. injecter des options de composant
     Vue.mixin(Mixins.LocalesMixin);
   },
-  loadLocale(languageName, dictionnary) {
-    locales.$load(languageName, dictionnary);
-  },
+/* loadLocale(languageName) {
+    locales.$load(languageName);
+  }, */
 };
 export default Elapp;

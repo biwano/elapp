@@ -11,7 +11,6 @@ import createStore from '@/store/store';
 import App from './App';
 import router from './routes';
 import config from './config';
-import en from './locales/en';
 
 // loads the Icon plugin
 UIkit.use(Icons);
@@ -20,7 +19,6 @@ Vue.config.productionTip = false;
 Vue.use(Vuex);
 Vue.use(Elapp, config);
 const store = createStore();
-Elapp.loadLocale('en', en);
 
 Vue.filter('formatDate', value => (value ? moment(String(value)).format('DD MMM YYYY hh:mm') : undefined));
 // Injecting mixins

@@ -1,13 +1,17 @@
-let Elapp;
-
 const ElAppRemoteComponent = {
   name: 'schemas',
-  template: `<documents-table :filter="filter" :columns="columns">
-  ezae
-    <template slot-scope="slotProps">
-      <td>{{slotProps.doc.identifier}}</td>
+  template: `
+  <div>
+  <h4 class="uk-heading-bullet">Schemas</h4>
+  <documents-table :filter="filter" :columns="columns">
+    <template slot="header" slot-scope="slotProps">
+     <th>{{ L.identifier }}</th>
     </template>
-  </documents-table>`,
+    <template slot-scope="slotProps">
+     <td>{{slotProps.doc.identifier}}</td>
+    </template>
+  </documents-table>
+  </div>`,
   mixins: [Elapp.default.Mixins.DocumentMixin],
   components: { 'documents-table': Elapp.default.Components.DocumentsTable },
   data() {

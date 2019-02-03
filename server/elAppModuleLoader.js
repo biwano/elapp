@@ -134,4 +134,4 @@ const loadModules = async function load(modulesDir) {
   
 };
 
-module.exports = { forEachFile, listFiles, loadModule, loadModules };
+module.exports = { forEachFile, loadFiles, listFiles, loadModule, loadModules };

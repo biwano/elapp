@@ -2,7 +2,9 @@
   <div id="app">
     <navigation />
     <messages :messages="$store.state.message.messages"></messages>
-    <router-view />
+    <div>
+      <router-view />
+    </div>
   </div>
 </template>
 

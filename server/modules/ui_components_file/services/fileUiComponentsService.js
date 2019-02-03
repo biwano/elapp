@@ -20,16 +20,27 @@ function serializeFunctions(object) {
 */
 const service = function service(elApp) {
   const components = {};
+  const locales = {};
   elApp.registerHook('module_loading', (module_) => {
+    // Registering components
     elApp.forEachFile(module_, 'components', (filePath) => {
       const name = path.basename(filePath);
       elApp.logService.trace('uiComponents', `File UI: Component '${name}' registered`);
       components[name] = filePath;
     });
+    // Registering locales
+    elApp.loadFiles(module_, 'locales', (locale, filePath) => {
+      let language = path.basename(filePath);
+      language = language.split('.')[0];
+      elApp.logService.trace('uiComponents', `File UI: Locale '${language}' registered`);
+      locales[language] = locales[language] || {};
+      Object.assign(locales[language], locale);
+    });
   });
   return {
     components,
-    respond(componentName, res) {
+    locales,
+    getComponent(componentName, res) {
       return new Promise((resolve) => {
         const componentPath = this.components[`${componentName}.js`];
         elApp.logService.debug('uiComponents', `Reading component '${componentName}' at location ${componentPath}`);
@@ -42,6 +53,9 @@ const service = function service(elApp) {
           });
         } else resolve();
       });
+    },
+    getLocale(language) {
+      return Promise.resolve(locales[language]);
     },
   };
 };

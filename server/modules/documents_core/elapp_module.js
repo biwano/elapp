@@ -14,11 +14,9 @@ module.exports = {
     if (elApp.getConfig('documents.dropDefaultRealm') === true) {
       promise = elApp.realmService.newRealm(elApp.realmService.defaultRealm, true);
     } else promise = Promise.resolve();
-    return promise.then(() => {
-      elApp.SchemaService(['group:admin']).register({ identifier: 'schema',
-        key: 'identifier',
-        fields: schemaSchemaDefinition,
-        defaultAcls: [] });
-    });
+    return promise.then(() => elApp.SchemaService(['group:admin']).register({ identifier: 'schema',
+      key: 'identifier',
+      fields: schemaSchemaDefinition,
+      defaultAcls: [] }));
   },
 };

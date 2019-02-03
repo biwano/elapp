@@ -1,4 +1,5 @@
-<template>
+const ElAppRemoteComponent = {
+  template: `
   <div class="uk-card uk-card-default uk-card-body">
     <div class="uk-margin">
       <span class="uk-card-title">{{ L.sign_in }}</span><br/>
@@ -26,18 +27,9 @@
         </button>
       </div>
     </form>
-  </div>
-</template>
-
-<script>
-
-import AuthMixin from '../mixins/authMixin';
-import FormMixin from '../mixins/formMixin';
-import MessagesMixin from '../mixins/messagesMixin';
-
-export default {
+  </div>  `,
   name: 'SignIn',
-  mixins: [FormMixin, AuthMixin, MessagesMixin],
+  mixins: [Elapp.default.Mixins.FormMixin, Elapp.default.Mixins.AuthMixin, Elapp.default.Mixins.MessagesMixin],
   data() {
     return {
       login: '',
@@ -70,8 +62,3 @@ export default {
     },
   },
 };
-</script>
-
-<!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped>
-</style>

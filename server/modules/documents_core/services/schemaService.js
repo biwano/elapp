@@ -30,15 +30,15 @@ const service = function service(elApp) {
           if (typeof key === 'undefined') key = [];
           if (typeof key === 'string') key = [key];
           // Register the schema/*
-          await elApp.persistence.registerSchema(realm, params);
-          const schema = {
-            identifier,
-            key,
-            fields,
-            $localAcls: schemaAcls,
-          };
-          elApp.logService.debug('documents', `Caching schema '${realm}_${identifier}'`);
-          return new Promise((resolve) => {
+          return new Promise(async (resolve) => {
+            await elApp.persistence.registerSchema(realm, params);
+            const schema = {
+              identifier,
+              key,
+              fields,
+              $localAcls: schemaAcls,
+            };
+            elApp.logService.debug('documents', `Caching schema '${realm}_${identifier}'`);
             cache.set(`schema_${realm}_${identifier}`, schema, () => {
             // Save the definition of the schema in the schema collection if it does not exist
               documentService.createIfAbsent('schema', schema).then(resolve);
