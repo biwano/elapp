@@ -1,4 +1,6 @@
-<template>
+// eslint-disable-next-line
+ElAppRemoteComponent = {
+  template: `
     <div class="uk-child-width-1-3@m uk-grid-small uk-grid-match" uk-grid>
       <div>
         <a href="#/view/schemas">
@@ -8,11 +10,7 @@
         </a>
       </div>
   </div>
-</template>
-
-<script>
-
-export default {
+`,
   name: 'Home',
   data() {
     return {
@@ -23,11 +21,3 @@ export default {
   methods: {
   },
 };
-</script>
-
-<!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped>
-.uk-card {
-  text-align: center;
-}
-</style>

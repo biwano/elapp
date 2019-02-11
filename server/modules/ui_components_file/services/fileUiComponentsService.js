@@ -25,14 +25,14 @@ const service = function service(elApp) {
     // Registering components
     elApp.forEachFile(module_, 'components', (filePath) => {
       const name = path.basename(filePath);
-      elApp.logService.trace('uiComponents', `File UI: Component '${name}' registered`);
+      elApp.logService.trace('uiComponents', `${module_.name} Component '${name}' registered`);
       components[name] = filePath;
     });
     // Registering locales
     elApp.loadFiles(module_, 'locales', (locale, filePath) => {
       let language = path.basename(filePath);
       language = language.split('.')[0];
-      elApp.logService.trace('uiComponents', `File UI: Locale '${language}' registered`);
+      elApp.logService.trace('uiComponents', `${module_.name} Locale '${language}' registered`);
       locales[language] = locales[language] || {};
       Object.assign(locales[language], locale);
     });
@@ -42,7 +42,7 @@ const service = function service(elApp) {
     locales,
     getComponent(componentName, res) {
       return new Promise((resolve) => {
-        const componentPath = this.components[`${componentName}.js`];
+        const componentPath = this.components[`${componentName}`];
         elApp.logService.debug('uiComponents', `Reading component '${componentName}' at location ${componentPath}`);
         if (typeof componentPath !== 'undefined') {
           fs.readFile(componentPath, { encoding: 'utf-8' }, (err, data) => {

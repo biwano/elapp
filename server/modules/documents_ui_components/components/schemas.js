@@ -1,4 +1,5 @@
-const ElAppRemoteComponent = {
+// eslint-disable-next-line
+ElAppRemoteComponent = {
   name: 'schemas',
   template: `
   <div>

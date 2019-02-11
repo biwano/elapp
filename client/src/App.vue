@@ -10,13 +10,14 @@
 
 <script>
 import Elapp from 'elapp';
-import Nav from '@/components/nav';
 
 export default {
   name: 'App',
-  mixins: [Elapp.Mixins.AuthMixin, Elapp.Mixins.MessagesMixin],
-  components: { navigation: Nav, messages: Elapp.Components.Messages },
+  mixins: [Elapp.Mixins.AuthMixin, Elapp.Mixins.MessagesMixin, Elapp.Mixins.ComponentMixin],
+  components: { messages: Elapp.Components.Messages },
   created() {
+    this.loadComponent('nav', 'navigation');
+
     this.messagePromiseCatcher(this.authGetUserInfo());
   },
 };

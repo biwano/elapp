@@ -1,5 +1,6 @@
-<template>
-
+// eslint-disable-next-line
+ElAppRemoteComponent = {
+  template: `
   <div uk-sticky="sel-target: .uk-navbar-container;
   cls-active: uk-navbar-sticky; bottom: #transparent-sticky-navbar">
 
@@ -48,15 +49,9 @@
       </div>
     </nav>
   </div>
-
-</template>
-
-<script>
-import Elapp from 'elapp';
-
-export default {
+`,
   name: 'Nav',
-  mixins: [Elapp.Mixins.AuthMixin, Elapp.Mixins.NavMixin],
+  mixins: [Elapp.default.Mixins.AuthMixin, Elapp.default.Mixins.NavMixin],
   data() {
     return {
     };
@@ -75,8 +70,3 @@ export default {
     },
   },
 };
-</script>
-
-<!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped>
-</style>

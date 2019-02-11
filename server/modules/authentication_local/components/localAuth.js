@@ -1,4 +1,5 @@
-const ElAppRemoteComponent = {
+// eslint-disable-next-line
+ElAppRemoteComponent = {
   template: `
   <div class="uk-card uk-card-default uk-card-body">
     <div class="uk-margin">
@@ -28,7 +29,7 @@ const ElAppRemoteComponent = {
       </div>
     </form>
   </div>  `,
-  name: 'SignIn',
+  name: 'LocalAuth',
   mixins: [Elapp.default.Mixins.FormMixin, Elapp.default.Mixins.AuthMixin, Elapp.default.Mixins.MessagesMixin],
   data() {
     return {
@@ -46,6 +47,7 @@ const ElAppRemoteComponent = {
     },
     // Sign in
     signIn() {
+      this.$emit('authenticated', 'a');
       if (this.validationStatus.valid) {
         this.messagePromiseCatcher(
           this.authSignOut().then(() => {
