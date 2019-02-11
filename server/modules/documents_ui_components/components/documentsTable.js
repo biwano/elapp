@@ -1,4 +1,7 @@
-<template>
+// eslint-disable-next-line
+ElAppRemoteComponent = {
+  name: 'DocumentsTable',
+  template: `
  <table class="uk-table uk-table-divider">
     <thead>
         <tr>
@@ -15,18 +18,8 @@
         </tr>
     </tbody>
 </table>
-</template>
-
-<script>
-
-// import AuthMixin from '../mixins/authMixin';
-// import FormMixin from '../mixins/formMixin';
-// import MessagesMixin from '../mixins/messagesMixin';
-import DocumentMixin from '../mixins/documentMixin';
-
-export default {
-  name: 'DocumentsTable',
-  mixins: [DocumentMixin],
+`,
+  mixins: [Elapp.default.Mixins.DocumentMixin],
   props: ['filter', 'columns'],
   data() {
     return {
@@ -40,8 +33,3 @@ export default {
   methods: {
   },
 };
-</script>
-
-<!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped>
-</style>

@@ -1,6 +1,6 @@
 // eslint-disable-next-line
 ElAppRemoteComponent = {
-  name: 'schemas',
+  name: 'Schemas',
   template: `
   <div>
   <h4 class="uk-heading-bullet">Schemas</h4>
@@ -13,8 +13,7 @@ ElAppRemoteComponent = {
     </template>
   </documents-table>
   </div>`,
-  mixins: [Elapp.default.Mixins.DocumentMixin],
-  components: { 'documents-table': Elapp.default.Components.DocumentsTable },
+  mixins: [Elapp.default.Mixins.DocumentMixin, Elapp.default.Mixins.ComponentMixin],
   data() {
     return {
       filter: {},
@@ -22,6 +21,7 @@ ElAppRemoteComponent = {
     };
   },
   created() {
+    this.loadComponent('documentsTable', 'documents-table');
     this.filter = this.matchQuery({ $schema: 'schema' }).filter;
   },
   methods: {

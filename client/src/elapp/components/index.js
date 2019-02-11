@@ -5,8 +5,6 @@ import Messages from './messages';
 import Suggestion from './suggestion';
 import Tabs from './tabs';
 
-import DocumentsTable from './documentsTable';
-
 
 export default {
   BooleanRadio,
@@ -16,5 +14,4 @@ export default {
   Suggestion,
   Tabs,
 
-  DocumentsTable,
 };

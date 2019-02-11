@@ -9,7 +9,7 @@ ElAppRemoteComponent = {
 
           <ul class="uk-navbar-nav">
               <li :class="classActive('/home')">
-                <icon url="#/home" icon="home" :size="1"></icon>
+                <icon url="#/view/home" icon="home" :size="1"></icon>
               </li>
           </ul>
         <ul class="uk-navbar-nav">
@@ -23,23 +23,23 @@ ElAppRemoteComponent = {
       <div class="uk-navbar-right">
           <ul class="uk-navbar-nav">
               <li :hidden="loggedIn" :class="classActive('/sign_in')">
-                <a href="#/sign_in">{{ L.sign_in }}</a></li>
+                <a href="#/view/localAuthView">{{ L.sign_in }}</a></li>
               <li :hidden="!loggedIn">
-                <icon url="#/profile" icon="user" :size="1"></icon>
+                <icon url="#/view/profile" icon="user" :size="1"></icon>
               </li>
               <li>
                 <icon icon="menu" :size="1"></icon>
                 <div class="uk-navbar-dropdown">
                     <ul class="uk-nav uk-navbar-dropdown-nav">
                       <li class="uk-nav-muted" style="white-space: nowrap">
-                        <a href="#/profile">{{ userLogin }}</a>
+                        <a href="#/view/profile">{{ userLogin }}</a>
                         <span :hidden="loggedIn">{{userName}}</span>
                         <icon :hidden="!loggedIn" @click="signOut()"
                               icon="sign-out" :size="1"></icon>
                       </li>
                       <li class="uk-nav-divider"></li>
                       <li class="uk-nav-muted">
-                        <a href="#/schemas">{{ L.schemas }}</a>
+                        <a href="#/view/schemas">{{ L.schemas }}</a>
                      </li>
                       <li class="uk-nav-muted">{{ $store.state.version }}</li>
                     </ul>

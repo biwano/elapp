@@ -8,7 +8,6 @@ import Vuex from 'vuex';
 import moment from 'moment';
 import Elapp from 'elapp';
 import createStore from '@/store/store';
-import App from './App';
 import router from './routes';
 import config from './config';
 
@@ -33,8 +32,12 @@ new Vue({
   el: '#app',
   store,
   router,
-  components: { App },
-  template: '<App/>',
+  //  components: { Loader },
+  template: '<app/></app>',
+  mixins: [Elapp.Mixins.ComponentMixin],
+  created() {
+    this.loadComponent('app');
+  },
 });
 
 export default Elapp;
