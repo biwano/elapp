@@ -36,7 +36,7 @@ new Vue({
   template: '<app/></app>',
   mixins: [Elapp.Mixins.ComponentMixin],
   created() {
-    this.loadComponent('app');
+    this.withComponent('app');
   },
 });
 

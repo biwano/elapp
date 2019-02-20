@@ -1,9 +1,11 @@
-const operators = {
+// eslint-disable-next-line
+let operators = {
   equals(p1, p2) {
     return { $op: '=', $params: [p1, p2] };
   },
 };
-const Query = function Query(realm, originalExecutor) {
+// eslint-disable-next-line
+let Query = function Query(realm, originalExecutor) {
   return function makeQuery(filter, options) {
     const res = {
       filter,
@@ -13,11 +15,12 @@ const Query = function Query(realm, originalExecutor) {
         this.executor = executor;
       },
       // Adds queries which must be all true
-      and(filters) {
+      and(filters_) {
+        let filters = filters_;
         if (!Array.isArray(filters)) {
           filters = [filters];
         }
-        if (typeof this.query !== 'undefined') {
+        if (typeof this.filter !== 'undefined') {
           if (this.filter.$op !== 'and') {
             filters.push(this.filter);
             this.filter = { $op: 'and', $params: filters };
@@ -25,6 +28,16 @@ const Query = function Query(realm, originalExecutor) {
             this.filter.$params = this.filter.$params.concat(filters);
           }
         } else this.filter = { $op: 'and', $params: filters };
+      },
+      // Creates a match filter
+      match(body) {
+        Object.keys(body).forEach((key) => {
+          let val = body[key];
+          // quote strings
+          if (typeof val === 'string') val = `'${val}'`;
+          this.and(operators.equals(key, val));
+        });
+        return this;
       },
       // sets an option
       setOption(key, value) {
@@ -54,12 +67,19 @@ const Query = function Query(realm, originalExecutor) {
       all() {
         return this.execute();
       },
-
+      // Counts the number of results in query
+      count() {
+        return this.executor.countBackend(realm, { filter: this.filter, options: this.options });
+      },
     };
     // Add operators function
     Object.keys(operators).forEach((key) => { res[key] = operators[key]; });
     return res;
   };
 };
-
-module.exports = { Query, equals: operators.equals };
+const QueryBuilder = function QueryBuilder() {
+  return Query()();
+};
+try {
+  module.exports = { Query, QueryBuilder, equals: operators.equals, operators };
+} catch (e) {}

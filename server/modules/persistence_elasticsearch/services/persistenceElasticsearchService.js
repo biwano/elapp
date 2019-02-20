@@ -72,17 +72,24 @@ const service = function service(elApp) {
     });
   };
 
-  persistence.search = function search(realm, query) {
+  persistence.api = function search(api, realm, query) {
     const options = query.options;
     elApp.logService.debug('persistence', `Elapp query: ${JSON.stringify(query)}`);
     const esQuery = queryHelper.encodeFilter(query.filter);
     const body = { query: esQuery };
     Object.assign(body, options);
     elApp.logService.debug('persistence', `Elapp ES Query: ${JSON.stringify(body)}`);
-    return this.es.search({
+    return this.es[api]({
       index: realm,
       body,
-    }).then(result => result.hits.hits.map(hit => hit._source));
+    });
+  };
+  persistence.search = function search(realm, query) {
+    return this.api('search', realm, query).then(result => result.hits.hits.map(hit => hit._source));
+  };
+
+  persistence.count = function count(realm, query) {
+    return this.api('count', realm, query).then(result => result.count);
   };
 
   persistence.get = function get(realm, uuid) {

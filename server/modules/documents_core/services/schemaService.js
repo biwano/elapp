@@ -25,7 +25,7 @@ const service = function service(elApp) {
         let key = params.key;
         const schemaAcls = [{ 'group:member': 'read' }];
         const documentService = elApp.DocumentService(acls, realm);
-        elApp.logService.debug('documents', `Registering schema: ${params.identifier}`);
+        elApp.logService.debug('documents', `Registering schema: ${realm}_${identifier}`);
         try {
           if (typeof key === 'undefined') key = [];
           if (typeof key === 'string') key = [key];
@@ -41,6 +41,7 @@ const service = function service(elApp) {
             elApp.logService.debug('documents', `Caching schema '${realm}_${identifier}'`);
             cache.set(`schema_${realm}_${identifier}`, schema, () => {
             // Save the definition of the schema in the schema collection if it does not exist
+              elApp.logService.debug('documents', `Persisting schema: ${realm}_${identifier}`);
               documentService.createIfAbsent('schema', schema).then(resolve);
             });
           });

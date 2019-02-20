@@ -100,9 +100,14 @@ const service = function service(elApp) {
       async search(query) {
         let docs = [];
         let params = Object.assign({}, query);
-        params = codecs.encode(query);
+        params = codecs.encodeQuery(params);
         docs = await elApp.persistence.search(realm, params);
         return docs.map(doc => codecs.decode(doc));
+      },
+      async count(query) {
+        let params = Object.assign({}, query);
+        params = codecs.encode(params);
+        return elApp.persistence.count(realm, params);
       },
     };
   };

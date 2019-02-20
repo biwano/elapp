@@ -26,10 +26,23 @@ ElAppRemoteComponent = {
       documents: [],
     };
   },
+  watch: {
+    filter() {
+      this.load();
+    },
+  },
   created() {
-    const promise = this.search(this.filter);
-    promise.then((documents) => { this.documents = documents; });
+    this.load();
   },
   methods: {
+    load() {
+      if (typeof this.filter !== 'undefined') {
+        const promise = this.search(this.filter);
+        promise.then((documents) => {
+          this.documents = documents;
+          this.$emit('loaded', documents);
+        });
+      }
+    },
   },
 };

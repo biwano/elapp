@@ -8,7 +8,7 @@ ElAppRemoteComponent = {
   name: 'LocalAuthView',
   mixins: [Elapp.default.Mixins.NavMixin, Elapp.default.Mixins.ComponentMixin],
   created() {
-    this.loadComponent('localAuth', 'local-auth');
+    this.withComponent('localAuth', 'local-auth');
   },
   methods: {
     authenticated() {

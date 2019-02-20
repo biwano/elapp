@@ -1,6 +1,6 @@
 module.exports = {
   log: { level: 'info',
-    persistence: { level: 'trace' },
+    persistence: { level: 'debug' },
     moduleloader: { level: 'trace' },
     authentication: { level: 'info' },
     authorization: { level: 'trace' },

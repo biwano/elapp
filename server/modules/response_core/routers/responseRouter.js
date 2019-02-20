@@ -26,6 +26,9 @@ router.use('/', async (req, res, next) => {
     req.logService.error('response', exception);
     res.sendError('unexpected', exception);
   };
+  res.sendNotFound = function notFound() {
+    res.status(404).send('Not found');
+  };
   next();
 });
 

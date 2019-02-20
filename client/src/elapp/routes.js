@@ -2,5 +2,5 @@ import View from './view';
 
 
 export default [
-  { path: '/view/:name', name: 'View', component: View },
+  { path: '/view/:name/:param1?', name: 'View', component: View },
 ];

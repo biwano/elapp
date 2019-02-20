@@ -43,15 +43,19 @@ const service = function service(elApp) {
     getComponent(componentName, res) {
       return new Promise((resolve) => {
         const componentPath = this.components[`${componentName}`];
-        elApp.logService.debug('uiComponents', `Reading component '${componentName}' at location ${componentPath}`);
         if (typeof componentPath !== 'undefined') {
+          elApp.logService.debug('uiComponents', `Reading component '${componentName}' at location ${componentPath}`);
           fs.readFile(componentPath, { encoding: 'utf-8' }, (err, data) => {
             res.setHeader('Content-Length', data.length);
             res.write(data, 'binary');
             res.end();
             resolve(data);
           });
-        } else resolve();
+        } else {
+          elApp.logService.error('uiComponents', `Reading component '${componentName}' failed`);
+          res.sendNotFound();
+          resolve();
+        }
       });
     },
     getLocale(language) {

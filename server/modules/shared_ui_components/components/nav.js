@@ -23,7 +23,7 @@ ElAppRemoteComponent = {
       <div class="uk-navbar-right">
           <ul class="uk-navbar-nav">
               <li :hidden="loggedIn" :class="classActive('/sign_in')">
-                <a href="#/view/localAuthView">{{ L.sign_in }}</a></li>
+                <a href="#/view/localAuth">{{ L.sign_in }}</a></li>
               <li :hidden="!loggedIn">
                 <icon url="#/view/profile" icon="user" :size="1"></icon>
               </li>

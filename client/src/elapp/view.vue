@@ -1,5 +1,5 @@
 <template>
-  <elapp-component :name="$route.params.name"></elapp-component>
+  <elapp-component :name="$route.params.name + 'View'"></elapp-component>
 </template>
 
 <script>

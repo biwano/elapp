@@ -13,7 +13,7 @@ ElAppRemoteComponent = {
   mixins: [Elapp.default.Mixins.AuthMixin, Elapp.default.Mixins.MessagesMixin, Elapp.default.Mixins.ComponentMixin],
   components: { messages: Elapp.default.Components.Messages },
   created() {
-    this.loadComponent('nav', 'navigation');
+    this.withComponent('nav', 'navigation');
     this.messagePromiseCatcher(this.authGetUserInfo());
   },
 };

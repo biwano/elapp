@@ -1,4 +1,4 @@
-const { Query, equals } = require('../helpers/query');
+const { Query } = require('../components/query');
 
 module.exports = {
   name: 'persistence',
@@ -9,17 +9,13 @@ module.exports = {
     const serviceName = elApp.utils.camelCase(`persistence_${serviceId}_service`);
     const S = elApp[serviceName];
     S.searchBackend = S.search;
+    S.countBackend = S.count;
     Object.assign(S, {
       Query(realm, query) {
         return Query(realm, this)(query);
       },
       matchQuery(realm, body) {
-        const query = this.Query(realm);
-        Object.keys(body).forEach((key) => {
-          query.and(equals(key, body[key]));
-        },
-        );
-        return query;
+        return Query(realm, this)().match(body);
       },
       match(realm, body) {
         return this.matchQuery(realm, body).all();
@@ -29,6 +25,9 @@ module.exports = {
       },
       search(realm, body) {
         return this.Query(realm, body).all();
+      },
+      count(realm, body) {
+        return this.Query(realm, body).count();
       },
     });
     return elApp[serviceName];

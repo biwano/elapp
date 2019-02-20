@@ -21,7 +21,7 @@ export default {
   },
   methods: {
     load() {
-      this.loadComponent(this.name);
+      this.withComponent(this.name);
     },
   },
 
