@@ -1,4 +1,4 @@
-const { Query } = require('../components/query');
+const { Query } = require('../helpers/query');
 
 module.exports = {
   name: 'persistence',

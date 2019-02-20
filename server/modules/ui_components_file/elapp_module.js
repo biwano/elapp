@@ -1,6 +1,6 @@
 module.exports = {
   name: 'ui_components_file',
-  dependencies: ['ui_components_core'],
+  dependencies: ['ui_components_core', 'assets'],
   documentation: {
     description: 'Subservice of Chained service that enables clients to fetch UI information',
     endpoints: [{ path: '/component/:core_ui_component',

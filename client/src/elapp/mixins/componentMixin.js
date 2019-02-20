@@ -1,10 +1,12 @@
 import Vue from 'vue';
+import AssetMixin from './assetMixin';
 import http from '../services/http';
 
 export default {
+  mixins: [AssetMixin],
   methods: {
     getComponentURL(component) {
-      return `component/${component}.js`;
+      return this.getAssetURL('components', `${component}.js`);
     },
     withComponent(componentName, alias_) {
       let alias = alias_;
@@ -20,9 +22,6 @@ export default {
           resolve(ElAppRemoteComponent);
         });
       });
-    },
-    getComponent(component) {
-      return http.get(`component/${component}`);
     },
   },
 };

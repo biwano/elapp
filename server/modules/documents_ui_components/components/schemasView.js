@@ -29,7 +29,7 @@ ElAppRemoteComponent = {
   methods: {
     loaded(documents) {
       documents.forEach((doc, index) => {
-        this.matchQuery({ $schema: doc.$schema }).then((query) => {
+        this.matchQuery({ $schema: doc.identifier }).then((query) => {
           this.count(query.filter).then((count) => {
             doc.count = count;
             this.$set(documents, index, doc);

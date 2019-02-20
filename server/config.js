@@ -7,6 +7,7 @@ module.exports = {
     groups: { level: 'trace' },
     documents: { level: 'debug' },
     uiComponents: { level: 'debug' },
+    assets: { level: 'debug' },
   },
   persistence: {
     backend: 'elasticsearch',

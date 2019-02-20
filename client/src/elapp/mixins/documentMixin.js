@@ -1,19 +1,15 @@
 import http from '../services/http';
-import ComponentMixin from './componentMixin';
+import AssetMixin from './assetMixin';
 
-let loading;
 export default {
-  mixins: [ComponentMixin],
+  mixins: [AssetMixin],
   methods: {
     init() {
-      if (!this.Query) {
-        if (typeof loading === 'undefined') {
-          loading = http.loadScript(this.getComponentURL('query')).then(() => {
-            // eslint-disable-next-line
+      if (!this.Q) {
+        return this.loadJavascriptAsset('helpers', 'query.js').then(() => {
+          // eslint-disable-next-line
             this.Q = { QueryBuilder, operators };
-          });
-        }
-        return loading;
+        });
       }
       return Promise.resolve();
     },
